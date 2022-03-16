@@ -83,14 +83,12 @@ document.getElementById("btn_CellW").onclick = (_) => {
     );
 }
 
-document.getElementById("btn_import").onclick = (_) => {
-    document.getElementById("imageUpload").click();
-}
-document.getElementById("btn_import_map").onclick = (_) => {
-    document.getElementById("CFGUpload").click();
-}
 document.getElementById("btn_export").onclick = (_) => {
     downloadFile(JSON.stringify(GRID_DATA), "map.cfg", "application/json");
+}
+
+document.getElementById("btn_import").onclick = (_) => {
+    document.getElementById("imageUpload").click();
 }
 
 document.getElementById("imageUpload").onchange = (_) => {
@@ -110,6 +108,10 @@ document.getElementById("imageUpload").onchange = (_) => {
     };
 
     fileReader.readAsDataURL(document.getElementById("imageUpload").files[0]);
+}
+
+document.getElementById("btn_import_map").onclick = (_) => {
+    document.getElementById("CFGUpload").click();
 }
 
 document.getElementById("CFGUpload").onchange = (_) => {
