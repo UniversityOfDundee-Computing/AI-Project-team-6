@@ -9,7 +9,11 @@ for (let y = 0; y < GRID_CELLS_Y; y++) {
     for (let x = 0; x < GRID_CELLS_X; x++)
         GRID_DATA[y].push({v:0,c:-1});
 }
-renderGrid();
+fetch("map.cfg").then((d)=>{
+    d.json().then((data)=>{
+        importFrom2dArr(data);
+    })
+})
 
 
 /**
@@ -58,6 +62,19 @@ function renderGrid() {
                 (CANVAS.width / GRID_CELLS_X), (CANVAS.height / GRID_CELLS_Y));
         }
     }
+}
+
+function importFrom2dArr(arr) {
+    let y = 0;
+    arr.forEach((row)=>{
+        let x = 0;
+        row.forEach((cell)=>{
+            GRID_DATA[y][x] = {v:cell, c:(cell===-1?0:-1)}
+            x++;
+        })
+        y++;
+    })
+    renderGrid();
 }
 
 
