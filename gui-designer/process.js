@@ -127,13 +127,11 @@ function getNeighbourValues(x, y) {
  * @param points
  */
 function algo3(startX = 0, startY = 0, points = [{x: 0, y: 0}]) {
-    GRID_DATA[startY][startX].c = 1;
-    for (let pointsKey in points) {
-        GRID_DATA[points[pointsKey].y][points[pointsKey].x].c = 2;
-    }
+
     renderGrid();
 
     let routes = [];
+    let routesList = [];
 
 
     points.forEach((pointDST) => {
@@ -156,11 +154,58 @@ function algo3(startX = 0, startY = 0, points = [{x: 0, y: 0}]) {
     });
 
     routes.forEach((rte) => {
+        const route = {
+            cost:0,
+            end:rte[0],
+            start:[],
+            steps:rte
+        };
         rte.forEach((step) => {
-            GRID_DATA[step[1]][step[0]].c = 3;
+            route.start = step;
+            route.cost += GRID_DATA[step[1]][step[0]].v+1;
         })
+        routesList.push(route);
     })
+
+    const translatedRoutes = new Map();
+    routesList.forEach((rte)=>{
+        if (!translatedRoutes.has(rte.start.toString()))
+            translatedRoutes.set(rte.start.toString(), []);
+        translatedRoutes.get(rte.start.toString()).push(rte);
+    })
+
+    const visitedNodes = new Set();
+    const route = [];
+    let currentNode = [startX, startY];
+
+    while (route.length < points.length) {
+        const node = translatedRoutes.get(currentNode.toString());
+        let shortestL = Infinity;
+        let shortest = null;
+        node.forEach((otherNode)=>{
+            if (otherNode.cost < shortestL && !visitedNodes.has(otherNode.end.toString())) {
+                shortestL = otherNode.cost;
+                shortest = otherNode;
+            }
+        });
+        route.push(shortest);
+        visitedNodes.add(shortest.start.toString());
+        currentNode = shortest.end;
+    }
+
+    route.forEach((section)=>{
+       section.steps.forEach((step)=>{
+          GRID_DATA[step[1]][step[0]].c =4;
+       });
+    });
+
+    GRID_DATA[startY][startX].c = 1;
+    for (let pointsKey in points) {
+        GRID_DATA[points[pointsKey].y][points[pointsKey].x].c = 2;
+    }
+
     renderGrid();
+    console.log(route);
 
 }
 
