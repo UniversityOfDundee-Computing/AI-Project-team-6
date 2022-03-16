@@ -12,10 +12,11 @@ for (let y = 0; y < GRID_CELLS_Y; y++) {
     for (let x = 0; x < GRID_CELLS_X; x++)
         GRID_DATA[y].push({v: 0, c: -1});
 }
+// Test Code
 fetch("map.cfg").then((d) => {
     d.json().then((data) => {
         importFrom2dArr(data);
-        algo3(23, 7, [{x: 15, y: 19}, {x: 26, y: 11}, {x: 20, y: 22}, {x: 26, y: 23}]);
+        algo3(23, 7, [{x: 9, y: 26},{x: 27, y: 25},{x: 35, y: 26},{x: 44, y: 25},{x: 21, y: 23},{x: 14, y: 22},{x: 13, y: 15},{x: 9, y: 12},{x: 28, y: 16},{x: 30, y: 19},{x: 34, y: 13},{x: 28, y: 11},{x: 45, y: 11},{x: 45, y: 21}]);
     })
 })
 
@@ -121,19 +122,46 @@ function getNeighbourValues(x, y) {
 }
 
 /**
- * algorithm template
+ * Calculate the optimal route based on the nearest neighbour approach
+ * @param startX
+ * @param startY
+ * @param points
+ * @param translatedRoutes
+ * @returns {*[]}
+ */
+function nearestNeighbourAlgo(startX, startY, points, translatedRoutes) {
+    const visitedNodes = new Set();
+    const route = [];
+    let currentNode = [startX, startY];
+
+    while (route.length < points.length) {
+        const node = translatedRoutes.get(currentNode.toString());
+        let shortestL = Infinity;
+        let shortest = null;
+        node.forEach((otherNode) => {
+            if (otherNode.cost < shortestL && !visitedNodes.has(otherNode.end.toString())) {
+                shortestL = otherNode.cost;
+                shortest = otherNode;
+            }
+        });
+        route.push(shortest);
+        visitedNodes.add(shortest.start.toString());
+        currentNode = shortest.end;
+    }
+    return route;
+}
+
+/**
+ * algorithm 3 - using a* and nearest neighbor for a result
  * @param startX
  * @param startY
  * @param points
  */
 function algo3(startX = 0, startY = 0, points = [{x: 0, y: 0}]) {
-
-    renderGrid();
-
     let routes = [];
     let routesList = [];
 
-
+    // itterate through points from the start node adding to the routes array
     points.forEach((pointDST) => {
         const pointSRC = {x:startX, y:startY};
         if (pointSRC !== pointDST) {
@@ -143,6 +171,7 @@ function algo3(startX = 0, startY = 0, points = [{x: 0, y: 0}]) {
         }
     });
 
+    // itterate through all other points from all other points adding to the routes array
     points.forEach((pointSRC) => {
         points.forEach((pointDST) => {
             if (pointSRC !== pointDST) {
@@ -153,6 +182,7 @@ function algo3(startX = 0, startY = 0, points = [{x: 0, y: 0}]) {
         });
     });
 
+    // calculating path cost for each of the routes
     routes.forEach((rte) => {
         const route = {
             cost:0,
@@ -167,6 +197,7 @@ function algo3(startX = 0, startY = 0, points = [{x: 0, y: 0}]) {
         routesList.push(route);
     })
 
+    // translate the routes array into a format more usable in the nearest neighbour algo
     const translatedRoutes = new Map();
     routesList.forEach((rte)=>{
         if (!translatedRoutes.has(rte.start.toString()))
@@ -174,46 +205,36 @@ function algo3(startX = 0, startY = 0, points = [{x: 0, y: 0}]) {
         translatedRoutes.get(rte.start.toString()).push(rte);
     })
 
-    const visitedNodes = new Set();
-    const route = [];
-    let currentNode = [startX, startY];
+    const route = nearestNeighbourAlgo(startX, startY, points, translatedRoutes);
 
-    while (route.length < points.length) {
-        const node = translatedRoutes.get(currentNode.toString());
-        let shortestL = Infinity;
-        let shortest = null;
-        node.forEach((otherNode)=>{
-            if (otherNode.cost < shortestL && !visitedNodes.has(otherNode.end.toString())) {
-                shortestL = otherNode.cost;
-                shortest = otherNode;
-            }
-        });
-        route.push(shortest);
-        visitedNodes.add(shortest.start.toString());
-        currentNode = shortest.end;
-    }
-
+    // Paint the new cells
     route.forEach((section)=>{
-       section.steps.forEach((step)=>{
+       section.steps.reverse().forEach((step)=>{
           GRID_DATA[step[1]][step[0]].c =4;
        });
     });
 
+    // Paint origin and target cells
     GRID_DATA[startY][startX].c = 1;
     for (let pointsKey in points) {
         GRID_DATA[points[pointsKey].y][points[pointsKey].x].c = 2;
     }
 
     renderGrid();
-    console.log(route);
-
 }
 
+/**
+ * Heuristic function used in A* - simple pythagoras for distance btwn two points
+ * @param pointSRC
+ * @param pointDST
+ * @returns {number}
+ */
 function distance(pointSRC, pointDST) {
     return Math.sqrt((pointSRC.x - pointDST.x) * (pointSRC.x - pointDST.x) +
         (pointSRC.y - pointDST.y) * (pointSRC.y - pointDST.y));
 }
 
+// A* Algorithm, based on the pseudocode on https://en.wikipedia.org/wiki/A*_search_algorithm
 function reconstructPath(cameFrom, current) {
     const total_path = [];
     total_path.push(current);
@@ -225,6 +246,8 @@ function reconstructPath(cameFrom, current) {
     return total_path;
 }
 
+
+// A* Algorithm, based on the pseudocode on https://en.wikipedia.org/wiki/A*_search_algorithm
 function aStar(pointSRC, pointDST) {
     const openSet = new MinQueue(GRID_CELLS_Y * GRID_CELLS_X, [], [], Array, Float32Array);
     const openSetList = new Set();
