@@ -2,6 +2,8 @@ const CANVAS = document.getElementById("main_canvas");
 const CONTEXT = CANVAS.getContext("2d");
 
 const GRID_OUTLINE = "rgba(255,0,0,0.5)";
+const SLEEP_TIME = 1;
+
 
 let GRID_CELLS_X = 1;
 let GRID_CELLS_Y = 1;

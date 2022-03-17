@@ -45,30 +45,31 @@ function nearestNeighbourAlgo(startX, startY, points, translatedRoutes) {
  * @param startY
  * @param points
  */
-function algo3(startX = 0, startY = 0, points = [new Location(0,0)]) {
+async function algo3(startX = 0, startY = 0, points = [new Location(0,0)]) {
+    renderGrid();
     let routes = [];
     let routesList = [];
 
     // iterate through points from the start node adding to the routes array
-    points.forEach((pointDST) => {
+    for (const pointDST of points) {
         const pointSRC = new Location(startX, startY);
         if (!pointSRC.equals(pointDST)) {
-            let path = aStar(pointSRC, pointDST);
+            let path = await aStar(pointSRC, pointDST);
             if (path !== null)
                 routes.push(reconstructPath(path.cameFrom, path.current));
         }
-    });
+    }
 
     // iterate through all other points from all other points adding to the routes array
-    points.forEach((pointSRC) => {
-        points.forEach((pointDST) => {
+    for (const pointSRC of points) {
+        for (const pointDST of points) {
             if (!pointSRC.equals(pointDST)) {
-                let path = aStar(pointSRC, pointDST);
+                let path = await aStar(pointSRC, pointDST);
                 if (path !== null)
                     routes.push(reconstructPath(path.cameFrom, path.current));
             }
-        });
-    });
+        }
+    }
 
     // calculating path cost for each of the routes
     routes.forEach((rte) => {
@@ -136,7 +137,7 @@ function reconstructPath(cameFrom, current) {
 
 
 // A* Algorithm, based on the pseudocode on https://en.wikipedia.org/wiki/A*_search_algorithm
-function aStar(pointSRC, pointDST) {
+async function aStar(pointSRC, pointDST) {
     // The nodes that have been discovered, but may still need to be expanded
     // MinQueue is an ordered (priority) queue from the Heapify library, this
     // is used to speed up execution and avoid sorting an array at each step.
@@ -179,9 +180,14 @@ function aStar(pointSRC, pointDST) {
         if (current.equals(pointDST))
             return {cameFrom, current};
 
-        // iterate over the neighbours of the current cell
-        getNeighbourValues(current.x, current.y).forEach((current_neighbour) => {
+        fillSquareOnGridFromLocation(current, "rgb(128,0,255)");
 
+        // Get the relevant neighbour cells / actions
+        const actions = getNeighbourValues(current.x, current.y);
+
+        // iterate over the neighbours of the current cell
+        actions.forEach((current_neighbour) => {
+            fillSquareOnGridFromLocation(current_neighbour, "rgb(0,180,255)");
             // Calculate the score of the current neighbour from the current node
             const tentative_gScore = gScore[current] + current_neighbour.v + 1;
 
@@ -199,6 +205,8 @@ function aStar(pointSRC, pointDST) {
                 }
             }
         });
+
+        await new Promise(r => setTimeout(r, SLEEP_TIME));
     }
     return null;
 }
