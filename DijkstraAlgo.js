@@ -13,10 +13,10 @@
 
 
     const smallestDistanceNode = (distances, processed) => {
-        return Object.keys(distances).reduce((lowest, node) => {
+        return Object.keys(distances).reduce((lowest, cell) => {
             if (lowest === null || distances[node] < distances[lowest]){
-                if (!processed.includes(node)){
-                    lowest = node;
+                if (!processed.includes(cell)){
+                    lowest = cell;
                 }
             }
             return lowest;
@@ -31,22 +31,22 @@
         }
         const processed = [];
 
-        let node = smallestDistanceNode(distances, processed);
-        while (node){
-            let distance = distances[node];
-            let children = graph[node];
+        let cell = smallestDistanceNode(distances, processed);
+        while (cell){
+            let distance = distances[cell];
+            let children = graph[cell];
             for(let n in children){
                 let newDistance = distance + children[n];
                 if(!distances[n]){
                     distances[n] = newDistance;
-                    parents[n] = node;
+                    parents[n] = cell;
                 }
                 if(distances[n] > newDistance){
                     distances[n] = newDistance;
-                    parents[n] = node;
+                    parents[n] = cell;
                 }
             }
-            processed.push(node);
+            processed.push(cell);
             node = smallestDistanceNode(distances, processed);
         }
         let optimalPath = ['finish'];
