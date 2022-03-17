@@ -21,9 +21,12 @@ function nearestNeighbourAlgo(startX, startY, points, translatedRoutes) {
                 shortest = otherNode;
             }
         });
-        route.push(shortest);
-        visitedNodes.add(shortest.start.toString());
-        currentNode = shortest.end;
+        if (shortest!==null) {
+            route.push(shortest);
+            visitedNodes.add(shortest.start.toString());
+            currentNode = shortest.end;
+        } else
+            return route;
     }
     return route;
 }

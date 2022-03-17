@@ -17,10 +17,15 @@ for (let y = 0; y < GRID_CELLS_Y; y++) {
 // Test Code
 fetch("map.cfg").then((d) => {
     d.json().then((data) => {
-        importFrom2dArr(data);
-        algo3(23, 7, [{x: 9, y: 26}, {x: 27, y: 25}, {x: 35, y: 26}, {x: 44, y: 25}, {x: 21, y: 23},
-            {x: 14, y: 22}, {x: 13, y: 15}, {x: 9, y: 12}, {x: 28, y: 16}, {x: 30, y: 19}, {x: 34, y: 13},
-            {x: 28, y: 11}, {x: 45, y: 11}, {x: 45, y: 21}]);
+        findPath(data, new Location(23, 7), [
+            new Location(9,26),
+            new Location(27,25),
+            new Location(35,26),
+            new Location(44,25),
+            new Location(21,23),
+            new Location(14,22),
+            new Location(13,15)
+        ]);
     })
 })
 
@@ -82,10 +87,6 @@ function importFrom2dArr(arr) {
         })
         y++;
     })
-    renderGrid();
-
-    // TODO temp
-    console.log(breadthFirstSearch());
 }
 
 // fillSquareOnGrid(0,1, "rgba(0,0,128,0.8)");
@@ -135,4 +136,25 @@ function getNeighbourValues(x, y) {
         }
     }
     return rtn;
+}
+
+/**
+ * Called to trigger any of the algorithms
+ * @param map
+ * @param startLocation
+ * @param targets
+ * @param method
+ */
+function findPath(map = [[-1]], startLocation = new Location(0, 0), targets = Location[0], method = "approach3") {
+    importFrom2dArr(map);
+
+    switch (method) {
+        case "approach1":
+            break;
+        case "approach3":
+            algo3(startLocation.x, startLocation.y, targets);
+            break;
+        default:
+            console.error("Unknown method: '" + method + "'");
+    }
 }
