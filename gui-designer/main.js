@@ -218,11 +218,11 @@ function downloadFile(data, filename, type) {
 }
 
 function openSlideMenu(){
-    document.getElementById('side-menu').style.width = '250px';
+    document.getElementById('side-menu').style.left = '0px';
     document.getElementById('main').style.marginLeft = '250px';
 }
 
 function closeSlideMenu(){
-    document.getElementById('side-menu').style.width = '0';
-    document.getElementById('main').style.marginLeft = '0';
+    document.getElementById('side-menu').style.left = '-250px';
+    document.getElementById('main').style.marginLeft = '0px';
 }

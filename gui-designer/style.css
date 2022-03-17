@@ -9,11 +9,11 @@ body {
 
 .side-nav {
     height: 100%;
-    width: 0;
+    width: 250px;
     position: fixed;
     z-index: 1;
     top: 0;
-    left: 0;
+    left: -250px;
     background-color: #111;
     opacity: 0.9;
     overflow-x: hidden;
@@ -30,12 +30,14 @@ body {
 }
 
 
-.side-nav .btn-close {
+.side-nav .button-close {
     position: absolute;
     top: 0;
     right: 22px;
     font-size: 36px;
     margin-left: 50px;
+    color: white;
+    text-decoration: none;
 }
 
 #main {
