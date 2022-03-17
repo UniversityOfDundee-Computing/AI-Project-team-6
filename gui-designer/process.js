@@ -7,10 +7,10 @@ let GRID_DATA = [];
 for (let y = 0; y < GRID_CELLS_Y; y++) {
     GRID_DATA.push([]);
     for (let x = 0; x < GRID_CELLS_X; x++)
-        GRID_DATA[y].push({v:0,c:-1});
+        GRID_DATA[y].push({v: 0, c: -1});
 }
-fetch("map.cfg").then((d)=>{
-    d.json().then((data)=>{
+fetch("map.cfg").then((d) => {
+    d.json().then((data) => {
         importFrom2dArr(data);
     })
 })
@@ -65,10 +65,10 @@ function renderGrid() {
 
 function importFrom2dArr(arr) {
     let y = 0;
-    arr.forEach((row)=>{
+    arr.forEach((row) => {
         let x = 0;
-        row.forEach((cell)=>{
-            GRID_DATA[y][x] = {v:cell, c:(cell===-1?0:-1)}
+        row.forEach((cell) => {
+            GRID_DATA[y][x] = {v: cell, c: (cell === -1 ? 0 : -1)}
             x++;
         })
         y++;
@@ -76,21 +76,20 @@ function importFrom2dArr(arr) {
     renderGrid();
 
     // TODO temp
-console.log(breadthFirstSearch());
+    console.log(breadthFirstSearch());
 }
 
 // fillSquareOnGrid(0,1, "rgba(0,0,128,0.8)");
 function fillSquareOnGrid(x, y, colour) {
 
     CONTEXT.clearRect(x * (CANVAS.width / GRID_CELLS_X), y * (CANVAS.height / GRID_CELLS_Y),
-    (CANVAS.width / GRID_CELLS_X), (CANVAS.height / GRID_CELLS_Y));
+        (CANVAS.width / GRID_CELLS_X), (CANVAS.height / GRID_CELLS_Y));
     CONTEXT.fillStyle = colour;
     CONTEXT.fillRect(x * (CANVAS.width / GRID_CELLS_X), y * (CANVAS.height / GRID_CELLS_Y),
-(CANVAS.width / GRID_CELLS_X), (CANVAS.height / GRID_CELLS_Y));
+        (CANVAS.width / GRID_CELLS_X), (CANVAS.height / GRID_CELLS_Y));
 }
 
-function breadthFirstSearch()
-{
+function breadthFirstSearch() {
     let startLocation = {
         x: 4,
         y: 4
@@ -113,17 +112,17 @@ function breadthFirstSearch()
     };
 
     // todo make goal test function
-    if (node.state == goalLocation) {
+    if (node.state === goalLocation) {
         return node;
     }
-    
+
     let frontier = [node];
     let explored = [];
 
     let i = 0;
-    while(true) {
+    while (true) {
 
-        if(frontier.length == 0)
+        if (frontier.length === 0)
             return null;
 
         node = frontier.shift();
@@ -134,25 +133,24 @@ function breadthFirstSearch()
         let actions = getNeighbourValues(node.state.x, node.state.y);
 
         console.log(node);
-            explored.forEach(state => {
-                if(state.x != startLocation.x || state.y != startLocation.y)
-                    fillSquareOnGrid(state.x, state.y, "rgba(173,216,230,0.8)");
-            });   
+        explored.forEach(state => {
+            if (state.x !== startLocation.x || state.y !== startLocation.y)
+                fillSquareOnGrid(state.x, state.y, "rgba(173,216,230,0.8)");
+        });
 
-            frontier.forEach(node => {
-                fillSquareOnGrid(node.state.x, node.state.y, "rgba(0,0,255,0.8)");
-            });
+        frontier.forEach(node => {
+            fillSquareOnGrid(node.state.x, node.state.y, "rgba(0,0,255,0.8)");
+        });
 
-        for(let i = 0; i<actions.length; i++)
-        {
+        for (let i = 0; i < actions.length; i++) {
             let action = actions[i];
-            
+
             let currentLocation = {
                 x: action.x,
                 y: action.y
             }
 
-            child = {
+            const child = {
                 state: currentLocation,
                 parent: node,
                 // TODO: unsure about action
@@ -162,34 +160,28 @@ function breadthFirstSearch()
 
             // TODO rewrite
             let matchingInFrontier = frontier.some(e => {
-                if (e.state.x === child.state.x && e.state.y == child.state.y) {
-                  return true;
-                }
-              });
+                return (e.state.x === child.state.x && e.state.y === child.state.y)
+            });
 
-              let matchingInExplored = explored.some(e => {
-                if (e.x === child.state.x && e.y == child.state.y) {
-                  return true;
-                }
-              });
+            let matchingInExplored = explored.some(e => {
+                return (e.x === child.state.x && e.y === child.state.y)
+            });
 
-            
-            if(!matchingInFrontier && !matchingInExplored) {
+
+            if (!matchingInFrontier && !matchingInExplored) {
                 // console.log(child.state.x + " " + child.state.y);
-                if (child.state.x == goalLocation.x && child.state.y == goalLocation.y)
+                if (child.state.x === goalLocation.x && child.state.y === goalLocation.y)
                     return child;
-                
+
                 frontier.push(child);
                 // console.log('matching none');
-            }
-            else
-            {
+            } else {
                 // console.log('matching both');
             }
         }
 
-        if(i++ > 500)
-        return;
+        if (i++ > 500)
+            return;
     }
 }
 
@@ -206,7 +198,7 @@ function breadthFirstSearch()
  * @param y
  * @returns [{v:Cell Value/Weight, x: xCoord, y: yCoord, d: compass direction (NESW)}]
  */
- function getNeighbourValues(x, y) {
+function getNeighbourValues(x, y) {
     const rtn = [];
     const cellsToCheck = [-1, 0, 1];
     for (const dirY in cellsToCheck) {
@@ -237,6 +229,6 @@ function breadthFirstSearch()
  * @param startY
  * @param points
  */
-function algoTemplate(startX = 0 , startY = 0, points = [{x:0,y:0}]) {
+function algoTemplate(startX = 0, startY = 0, points = [{x: 0, y: 0}]) {
 
 }
