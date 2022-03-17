@@ -60,7 +60,6 @@ function renderGrid() {
             CONTEXT.fillRect(x * (CANVAS.width / GRID_CELLS_X), y * (CANVAS.height / GRID_CELLS_Y),
                 (CANVAS.width / GRID_CELLS_X), (CANVAS.height / GRID_CELLS_Y));
 
-
             CONTEXT.strokeStyle = "rgba(255,0,0,0.5)";
 
             CONTEXT.strokeRect(x * (CANVAS.width / GRID_CELLS_X), y * (CANVAS.height / GRID_CELLS_Y),
@@ -80,8 +79,124 @@ function importFrom2dArr(arr) {
         y++;
     })
     renderGrid();
+
+    // TODO temp
+console.log(breadthFirstSearch());
 }
 
+// fillSquareOnGrid(0,1, "rgba(0,0,128,0.8)");
+function fillSquareOnGrid(x, y, colour) {
+
+    CONTEXT.clearRect(x * (CANVAS.width / GRID_CELLS_X), y * (CANVAS.height / GRID_CELLS_Y),
+    (CANVAS.width / GRID_CELLS_X), (CANVAS.height / GRID_CELLS_Y));
+    CONTEXT.fillStyle = colour;
+    CONTEXT.fillRect(x * (CANVAS.width / GRID_CELLS_X), y * (CANVAS.height / GRID_CELLS_Y),
+(CANVAS.width / GRID_CELLS_X), (CANVAS.height / GRID_CELLS_Y));
+}
+
+function breadthFirstSearch()
+{
+    let startLocation = {
+        x: 4,
+        y: 4
+    };
+    let goalLocation = {
+        x: 8,
+        y: 7
+    }
+
+    fillSquareOnGrid(goalLocation.x, goalLocation.y, "rgba(0,255,0,0.8)");
+    fillSquareOnGrid(startLocation.x, startLocation.y, "rgba(255,255,0,0.8)");
+
+    // root node
+    // TODO make a class
+    let node = {
+        state: startLocation,
+        parent: null,
+        action: null,
+        pathCost: 0
+    };
+
+    // todo make goal test function
+    if (node.state == goalLocation) {
+        return node;
+    }
+    
+    let frontier = [node];
+    let explored = [];
+
+    let i = 0;
+    while(true) {
+
+        if(frontier.length == 0)
+            return null;
+
+        node = frontier.shift();
+        explored.push(node.state);
+        // console.log(node.state);
+        // console.log(explored);
+
+        let actions = getNeighbourValues(node.state.x, node.state.y);
+
+        console.log(node);
+            explored.forEach(state => {
+                if(state.x != startLocation.x || state.y != startLocation.y)
+                    fillSquareOnGrid(state.x, state.y, "rgba(173,216,230,0.8)");
+            });   
+
+            frontier.forEach(node => {
+                fillSquareOnGrid(node.state.x, node.state.y, "rgba(0,0,255,0.8)");
+            });
+
+        for(let i = 0; i<actions.length; i++)
+        {
+            let action = actions[i];
+            
+            let currentLocation = {
+                x: action.x,
+                y: action.y
+            }
+
+            child = {
+                state: currentLocation,
+                parent: node,
+                // TODO: unsure about action
+                action: action,
+                pathCost: node.pathCost + action.v
+            };
+
+            // TODO rewrite
+            let matchingInFrontier = frontier.some(e => {
+                if (e.state.x === child.state.x && e.state.y == child.state.y) {
+                  return true;
+                }
+              });
+
+              let matchingInExplored = explored.some(e => {
+                if (e.x === child.state.x && e.y == child.state.y) {
+                  return true;
+                }
+              });
+
+            
+            if(!matchingInFrontier && !matchingInExplored) {
+                // console.log(child.state.x + " " + child.state.y);
+                if (child.state.x == goalLocation.x && child.state.y == goalLocation.y)
+                    return child;
+                
+                frontier.push(child);
+                // console.log('matching none');
+            }
+            else
+            {
+                // console.log('matching both');
+            }
+        }
+
+        if(i++ > 500)
+        return;
+    }
+}
 
 /**
  * -----
@@ -96,7 +211,7 @@ function importFrom2dArr(arr) {
  * @param y
  * @returns [{v:Cell Value/Weight, x: xCoord, y: yCoord, d: compass direction (NESW)}]
  */
-function getNeighbourValues(x, y) {
+ function getNeighbourValues(x, y) {
     const rtn = [];
     const cellsToCheck = [-1, 0, 1];
     for (const dirY in cellsToCheck) {
