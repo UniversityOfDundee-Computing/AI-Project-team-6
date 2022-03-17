@@ -1,5 +1,5 @@
 // MinQueue used to help with the Astar method - https://github.com/luciopaiva/heapify
-const {MinQueue} = Heapify;
+const { MinQueue } = Heapify;
 
 const CANVAS = document.getElementById("main_canvas");
 const CONTEXT = CANVAS.getContext("2d");
@@ -10,7 +10,7 @@ let GRID_DATA = [];
 for (let y = 0; y < GRID_CELLS_Y; y++) {
     GRID_DATA.push([]);
     for (let x = 0; x < GRID_CELLS_X; x++)
-        GRID_DATA[y].push({v: 0, c: -1});
+        GRID_DATA[y].push({ v: 0, c: -1 });
 }
 
 
@@ -18,9 +18,9 @@ for (let y = 0; y < GRID_CELLS_Y; y++) {
 fetch("map.cfg").then((d) => {
     d.json().then((data) => {
         importFrom2dArr(data);
-        algo3(23, 7, [{x: 9, y: 26}, {x: 27, y: 25}, {x: 35, y: 26}, {x: 44, y: 25}, {x: 21, y: 23},
-            {x: 14, y: 22}, {x: 13, y: 15}, {x: 9, y: 12}, {x: 28, y: 16}, {x: 30, y: 19}, {x: 34, y: 13},
-            {x: 28, y: 11}, {x: 45, y: 11}, {x: 45, y: 21}]);
+        // algo3(23, 7, [{x: 9, y: 26}, {x: 27, y: 25}, {x: 35, y: 26}, {x: 44, y: 25}, {x: 21, y: 23},
+        //     {x: 14, y: 22}, {x: 13, y: 15}, {x: 9, y: 12}, {x: 28, y: 16}, {x: 30, y: 19}, {x: 34, y: 13},
+        //     {x: 28, y: 11}, {x: 45, y: 11}, {x: 45, y: 21}]);
     })
 })
 
@@ -77,26 +77,70 @@ function importFrom2dArr(arr) {
     arr.forEach((row) => {
         let x = 0;
         row.forEach((cell) => {
-            GRID_DATA[y][x] = {v: cell, c: (cell === -1 ? 0 : -1)}
+            GRID_DATA[y][x] = { v: cell, c: (cell === -1 ? 0 : -1) }
             x++;
         })
         y++;
     })
     renderGrid();
-
-    // TODO temp
-    console.log(breadthFirstSearch());
 }
 
-// fillSquareOnGrid(0,1, "rgba(0,0,128,0.8)");
-function fillSquareOnGrid(x, y, colour) {
+// TODO: probably need to rewrite this
+let exploredColoredCells = [];
+let frontierColoredCells = [];
+let startLocationColoredCells = [];
+let targetLocationColoredCells = [];
+// Function to color in a specified cell
+function fillCellOnGrid(x, y, colour) {
 
+    if (checkIfArrayContainsState(startLocationColoredCells, new State(x,y)) || checkIfArrayContainsState(targetLocationColoredCells, new State(x,y)))
+        return false;
+
+    // Clear the cell of any previous colour
     CONTEXT.clearRect(x * (CANVAS.width / GRID_CELLS_X), y * (CANVAS.height / GRID_CELLS_Y),
         (CANVAS.width / GRID_CELLS_X), (CANVAS.height / GRID_CELLS_Y));
-    CONTEXT.fillStyle = colour;
+
+    // Set the fill colour
+    if (colour == "light-blue") {
+        CONTEXT.fillStyle = "rgba(173,216,230)";
+        exploredColoredCells.push(new State(x, y));
+    }
+    else if (colour == "blue") {
+        CONTEXT.fillStyle = "rgba(0,0,255)";
+        frontierColoredCells.push(new State(x, y));
+    }
+    else if (colour == "red") {
+        CONTEXT.fillStyle = "rgba(255,0,0)";
+        startLocationColoredCells.push(new State(x, y));
+    }
+    else if (colour == "green") {
+        CONTEXT.fillStyle = "rgba(0,255,0)";
+        targetLocationColoredCells.push(new State(x, y));
+    }
+    else if (colour == "yellow")
+        CONTEXT.fillStyle = "rgba(255,255,0)";
+    else if (colour == "black")
+        CONTEXT.fillStyle = "rgba(0,0,0,0.5)";
+
+
+    // Fill the cell with the colour
     CONTEXT.fillRect(x * (CANVAS.width / GRID_CELLS_X), y * (CANVAS.height / GRID_CELLS_Y),
         (CANVAS.width / GRID_CELLS_X), (CANVAS.height / GRID_CELLS_Y));
 }
+
+// TODO: fix if we want it
+function resetExploredFrontierColors() {
+    // let mergedArrays = exploredColoredCells.concat(frontierColoredCells);
+
+    // mergedArrays.forEach(cell => { 
+    //     CONTEXT.clearRect(cell.x * (CANVAS.width / GRID_CELLS_X), cell.y * (CANVAS.height / GRID_CELLS_Y),
+    //     (CANVAS.width / GRID_CELLS_X), (CANVAS.height / GRID_CELLS_Y));
+    // });
+}
+
+// Line taken from https://stackoverflow.com/questions/3583724/how-do-i-add-a-delay-in-a-javascript-loop
+// Returns a Promise that resolves after "ms" Milliseconds
+const timer = ms => new Promise(res => setTimeout(res, ms))
 
 
 /**
@@ -135,4 +179,20 @@ function getNeighbourValues(x, y) {
         }
     }
     return rtn;
+}
+
+function checkIfArrayContainsNode(array, node) {
+    let doesElementExist = array.some(e => {
+        return (e.state.x === node.state.x && e.state.y === node.state.y);
+    });
+
+    return doesElementExist;
+}
+
+function checkIfArrayContainsState(array, state) {
+    let doesElementExist = array.some(e => {
+        return (e.x === state.x && e.y === state.y);
+    });
+
+    return doesElementExist;
 }
