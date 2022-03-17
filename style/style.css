@@ -9,7 +9,7 @@ body {
     padding-right: 20px;
 }
 
-@media (min-width: 992px) {
+/* @media (min-width: 992px) {
     .smallScreen{
         display: none;
     }
@@ -19,4 +19,4 @@ body {
     .bigScreen{
         display: none;
     }
-}
+} */
