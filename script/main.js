@@ -182,8 +182,8 @@ function renderGrid() {
 function generateOutput() {
     let GRID_TargetsCLI = "";
     let GRID_TargetsList = "";
-    GRID_Targets.forEach((el)=>{
-       GRID_TargetsList += `<li>${el.x};${el.y}</li>`
+    GRID_Targets.forEach((el) => {
+        GRID_TargetsList += `<li>${el.x};${el.y}</li>`
     });
 
     GRID_TargetsCLI = GRID_TargetsList.replaceAll("</li><li>", ",")
@@ -205,24 +205,24 @@ function downloadFile(data, filename, type) {
         window.navigator.msSaveOrOpenBlob(file, filename);
     else { // Others
         const a = document.createElement("a"),
-                url = URL.createObjectURL(file);
+            url = URL.createObjectURL(file);
         a.href = url;
         a.download = filename;
         document.body.appendChild(a);
         a.click();
-        setTimeout(function() {
+        setTimeout(function () {
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
         }, 0);
     }
 }
 
-function openSlideMenu(){
+function openSlideMenu() {
     document.getElementById('side-menu').style.left = '0px';
     document.getElementById('main').style.marginLeft = '250px';
 }
 
-function closeSlideMenu(){
+function closeSlideMenu() {
     document.getElementById('side-menu').style.left = '-250px';
     document.getElementById('main').style.marginLeft = '0px';
 }
