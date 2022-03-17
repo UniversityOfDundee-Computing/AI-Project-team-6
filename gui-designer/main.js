@@ -216,3 +216,13 @@ function downloadFile(data, filename, type) {
         }, 0);
     }
 }
+
+function openSlideMenu(){
+    document.getElementById('side-menu').style.left = '0px';
+    document.getElementById('main').style.marginLeft = '250px';
+}
+
+function closeSlideMenu(){
+    document.getElementById('side-menu').style.left = '-250px';
+    document.getElementById('main').style.marginLeft = '0px';
+}

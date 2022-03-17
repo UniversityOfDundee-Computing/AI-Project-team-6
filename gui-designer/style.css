@@ -1,0 +1,53 @@
+body {
+    overflow-x: hidden;
+}
+
+.navbar {
+    overflow: hidden;
+    height: 63px;
+}
+
+.side-nav {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: -250px;
+    background-color: #111;
+    opacity: 0.9;
+    overflow-x: hidden;
+    padding-top: 60px;
+    transition: 0.5s;
+}
+
+.side-nav button {
+    width: fit-content;
+    margin: 2px;
+    font-size: 22px;
+    display: block;
+    transition: 0.3s;
+}
+
+
+.side-nav .button-close {
+    position: absolute;
+    top: 0;
+    right: 22px;
+    font-size: 36px;
+    margin-left: 50px;
+    color: white;
+    text-decoration: none;
+}
+
+#main {
+    transition: margin-left 0.5s;
+    padding: 20px;
+    overflow: hidden;
+    width: 100%;
+}
+
+
+@media(min-width:568px) {
+    /*.open-slide{display:none}*/
+}
