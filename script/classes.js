@@ -10,6 +10,9 @@ class Location {
             return (this.x === object.x && this.y === object.y);
         return false
     }
+    toString() {
+        return `Location(${this.x},${this.y})`
+    }
 }
 
 class Node {
@@ -23,5 +26,8 @@ class Node {
         this.parent = parent;
         this.action = action;
         this.pathCost = pathCost;
+    }
+    toString() {
+        return `Node(${this.state},${this.parent},${this.action},${this.pathCost})`
     }
 }

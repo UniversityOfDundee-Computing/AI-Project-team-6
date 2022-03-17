@@ -1,6 +1,3 @@
-// MinQueue used to help with the Astar method - https://github.com/luciopaiva/heapify
-const {MinQueue} = Heapify;
-
 const CANVAS = document.getElementById("main_canvas");
 const CONTEXT = CANVAS.getContext("2d");
 
@@ -99,6 +96,15 @@ function importFrom2dArr(arr) {
 }
 
 /**
+ * Wrapper to use Location objects
+ * @param location
+ * @param colour
+ */
+function fillSquareOnGridFromLocation(location, colour) {
+    fillSquareOnGrid(location.x, location.y, colour)
+}
+
+/**
  * Fill a square on the grid in a colour
  * @param x
  * @param y
@@ -122,6 +128,14 @@ function fillSquareOnGrid(x, y, colour) {
  * ----
  */
 
+/**
+ * Wrapper using Location class
+ * @param location
+ * @returns {*[]}
+ */
+function getNeighbourValuesFromLocation(location) {
+    return getNeighbourValues(location.x, location.y);
+}
 
 /**
  * Gets the data related to all neighbouring possible cells
