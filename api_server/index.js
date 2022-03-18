@@ -53,28 +53,34 @@ server.listen(SERVER_PORT, HTTP_HOST, () => {
 });
 
 function handleAPI(req, res) {
+    // Import the algorithms
     /*require("../script/algorithms/approach1");
     require("../script/algorithms/approach3");
     require("../script/process");*/
 
+    // gather the POST data
     let chunks = '';
     req.on('data', chunk => {
         chunks += chunk;
     })
+    // once all the data arrives, process it
     req.on('end', () => {
         try {
+            // decode and check the data is what is expected
             const data = JSON.parse(chunks);
             const targets = [];
 
             if ((data.targets === undefined) || (data.start === undefined) ||
                 (data.start.x === undefined) || (data.start.y === undefined) ||
                 (data.map === undefined) || (data.approach === undefined)) {
+                //error if the data is missing
                 res.writeHead(500);
                 res.end(JSON.stringify({error: "MALFORMED JSON", code: 500}));
                 return;
             }
 
 
+            // translate the targets into locations
             data.targets.forEach((target) => {
                 if (res.head === 500)
                     return;
@@ -87,13 +93,17 @@ function handleAPI(req, res) {
                 }
             });
 
+            // extra break on error
             if (res.head === 500)
                 return;
 
+            // generate api response and call algorithm
             let apiResponse = {};
             apiResponse = findPath(data.map, new Location(data.start.x, data.start.y), targets, data.approach);
+            //reply
             res.end(JSON.stringify(apiResponse));
         } catch (e) {
+            // any other errors caught and sent back
             res.writeHead(500);
             res.end(JSON.stringify(e));
         }
