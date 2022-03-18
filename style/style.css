@@ -11,15 +11,3 @@ canvas {
     padding-left: 20px;
     padding-right: 20px;
 }
-
-/* @media (min-width: 992px) {
-    .smallScreen{
-        display: none;
-    }
-}
-
-@media (max-width: 992px) {
-    .bigScreen{
-        display: none;
-    }
-} */
