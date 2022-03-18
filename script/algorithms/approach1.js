@@ -1,96 +1,154 @@
+async function breadthFirstSearch(problem) {
 
-function breadthFirstSearch() {
-    let startLocation = {
-        x: 4,
-        y: 4
-    };
-    let goalLocation = {
-        x: 8,
-        y: 7
-    }
-
-    fillSquareOnGrid(goalLocation.x, goalLocation.y, "rgba(0,255,0,0.8)");
-    fillSquareOnGrid(startLocation.x, startLocation.y, "rgba(255,255,0,0.8)");
-
-    // root node
-    // TODO make a class
-    let node = {
-        state: startLocation,
+    // Root node with initial state
+    let rootNode = new Node({
+        state: problem.initialState,
         parent: null,
         action: null,
         pathCost: 0
-    };
+    });
 
-    // todo make goal test function
-    if (node.state === goalLocation) {
-        return node;
+    // Check if the root node is the solution
+    if (problem.goalTest(rootNode.state)) {
+        return rootNode;
     }
 
-    let frontier = [node];
+    // Create the frontier and explored data structures
+    let frontier = [rootNode];
     let explored = [];
 
+    // TODO: safeguard for infinite loops, delete
     let i = 0;
+
     while (true) {
 
+        // Return failure if there are no more nodes to expand in the frontier
         if (frontier.length === 0)
             return null;
 
-        node = frontier.shift();
-        explored.push(node.state);
-        // console.log(node.state);
-        // console.log(explored);
+        // Get the next node to expand (first-in-first-out from frontier)
+        let parentNode = frontier.shift();
 
-        let actions = getNeighbourValues(node.state.x, node.state.y);
+        // Add the node to the explored set
+        explored.push(parentNode.state);
 
-        console.log(node);
-        explored.forEach(state => {
-            if (state.x !== startLocation.x || state.y !== startLocation.y)
-                fillSquareOnGrid(state.x, state.y, "rgba(173,216,230,0.8)");
-        });
+        // Fill the current cell to visualise which cell is being expanded
+        fillSquareOnGridFromLocation(parentNode.state, "black");
 
-        frontier.forEach(node => {
-            fillSquareOnGrid(node.state.x, node.state.y, "rgba(0,0,255,0.8)");
-        });
+        // Get the possible actions from the current node
+        let actions = problem.getActions(parentNode.state);
 
+        // Iterate through all actions
         for (let i = 0; i < actions.length; i++) {
+
             let action = actions[i];
+            // The new state is the new x,y location
+            let newState = new State(action.x, action.y);
 
-            let currentLocation = {
-                x: action.x,
-                y: action.y
-            }
-
-            const child = {
-                state: currentLocation,
-                parent: node,
-                // TODO: unsure about action
+            // Create the child node
+            const childNode = new Node({
+                state: newState,
+                parent: parentNode,
                 action: action,
-                pathCost: node.pathCost + action.v
-            };
-
-            // TODO rewrite
-            let matchingInFrontier = frontier.some(e => {
-                return (e.state.x === child.state.x && e.state.y === child.state.y)
+                pathCost: parentNode.pathCost + action.v
             });
 
-            let matchingInExplored = explored.some(e => {
-                return (e.x === child.state.x && e.y === child.state.y)
-            });
+            // Check if the node is present in the frontier or explored set
+            let isNodeInFrontier = checkIfArrayContainsNode(frontier, childNode);
+            let isNodeInExploredSet = checkIfArrayContainsState(explored, childNode.state);
 
+            // If not present in either
+            if (!isNodeInFrontier && !isNodeInExploredSet) {
 
-            if (!matchingInFrontier && !matchingInExplored) {
-                // console.log(child.state.x + " " + child.state.y);
-                if (child.state.x === goalLocation.x && child.state.y === goalLocation.y)
-                    return child;
+                // Return the node if it's the solution
+                if (problem.goalTest(childNode.state))
+                    return childNode;
 
-                frontier.push(child);
-                // console.log('matching none');
-            } else {
-                // console.log('matching both');
+                // Add the node to the frontier to be expanded in the next step
+                frontier.push(childNode);
+                // Fill the cell with colour to visualise the frontier set
+                fillSquareOnGridFromLocation(childNode.state, "blue");
             }
+
+            // Add a delay to visualise the algorithm
+            if (isVisualisationDelayOn)
+                await timer(visualisationDelayAmount);
         }
+
+        // Fill the cell with colour to visualise the explored set
+        fillSquareOnGridFromLocation(parentNode.state, "aqua");
 
         if (i++ > 500)
             return;
     }
+}
+
+async function approach1(startLocation, targetLocations) {
+
+    // TODO: get these as arguments
+    // let startLocation = new State(4, 4);
+    // let targetLocations = [
+    //     new State(8, 7),
+    //     new State(12, 7),
+    // ];
+
+    // Fill in the start and goal cells
+    // TODO: fix
+    fillSquareOnGridFromLocation(startLocation, "red");
+    targetLocations.forEach(location => {
+        fillSquareOnGridFromLocation(location, "green");
+    });
+
+    const startLocationCopy = startLocation;
+    const targetLocationsCopy = targetLocations;
+
+    // The initial search finds a path from the start location to the nearest target location
+    // The next iteration finds a path from that nearest target location to the next nearest target location
+    // Loop repeats until all targets are found
+    do {
+
+        // Paint origin and target cells
+        GRID_DATA[startLocationCopy.y][startLocationCopy.x].c = 1;
+        for (let pointsKey in targetLocationsCopy) {
+            GRID_DATA[targetLocationsCopy[pointsKey].y][targetLocationsCopy[pointsKey].x].c = 3;
+        }
+        renderGrid();
+
+        let currentProblem = new Problem({
+            initialState: startLocation,
+            goalStates: targetLocations
+        });
+
+        let foundTarget = await breadthFirstSearch(currentProblem);
+        // Set the found target to be the new start location for the next search iteration
+        startLocation = foundTarget.state;
+
+        // Remove the target that was last found from the list of targets
+        targetLocations = targetLocations.filter(function (value) {
+            return !(value.x == foundTarget.state.x && value.y == foundTarget.state.y);
+        });
+
+        // Reset the colored frontier and explored set from previous search
+        resetExploredFrontierColors();
+
+        // Paint the new cells
+        foundTarget.parent
+
+        drawPath(foundTarget);
+        // Paint origin and target cells
+        GRID_DATA[startLocationCopy.y][startLocationCopy.x].c = 1;
+        for (let pointsKey in targetLocationsCopy) {
+            GRID_DATA[targetLocationsCopy[pointsKey].y][targetLocationsCopy[pointsKey].x].c = 3;
+        }
+        renderGrid();
+
+        // Repeat searches until no target locations are left
+    } while (targetLocations.length > 0);
+}
+
+function drawPath(node) {
+    if (node == null)
+        return;
+    GRID_DATA[node.state.y][node.state.x].c = 4;
+    drawPath(node.parent);
 }
