@@ -1,6 +1,3 @@
-let isVisualisationDelayOn = true;
-let visualisationDelayAmount = 30;
-
 async function breadthFirstSearch(problem) {
 
     // Root node with initial state
@@ -36,7 +33,7 @@ async function breadthFirstSearch(problem) {
         explored.push(parentNode.state);
 
         // Fill the current cell to visualise which cell is being expanded
-        fillCellOnGrid(parentNode.state.x, parentNode.state.y, "black");
+        fillSquareOnGridFromLocation(parentNode.state, "black");
 
         // Get the possible actions from the current node
         let actions = problem.getActions(parentNode.state);
@@ -70,7 +67,7 @@ async function breadthFirstSearch(problem) {
                 // Add the node to the frontier to be expanded in the next step
                 frontier.push(childNode);
                 // Fill the cell with colour to visualise the frontier set
-                fillCellOnGrid(childNode.state.x, childNode.state.y, "blue");
+                fillSquareOnGridFromLocation(childNode.state, "blue");
             }
 
             // Add a delay to visualise the algorithm
@@ -79,33 +76,44 @@ async function breadthFirstSearch(problem) {
         }
 
         // Fill the cell with colour to visualise the explored set
-        fillCellOnGrid(parentNode.state.x, parentNode.state.y, "light-blue");
+        fillSquareOnGridFromLocation(parentNode.state, "aqua");
 
         if (i++ > 500)
             return;
     }
 }
 
-async function approach1() {
+async function approach1(startLocation, targetLocations) {
 
     // TODO: get these as arguments
-    let startLocation = new State(4, 4);
-    let targetLocations = [
-        new State(8, 7),
-        new State(12, 7),
-    ];
+    // let startLocation = new State(4, 4);
+    // let targetLocations = [
+    //     new State(8, 7),
+    //     new State(12, 7),
+    // ];
 
     // Fill in the start and goal cells
     // TODO: fix
-    fillCellOnGrid(startLocation.x, startLocation.y, "red");
+    fillSquareOnGridFromLocation(startLocation, "red");
     targetLocations.forEach(location => {
-        fillCellOnGrid(location.x, location.y, "green");
+        fillSquareOnGridFromLocation(location, "green");
     });
+
+    const startLocationCopy = startLocation;
+    const targetLocationsCopy = targetLocations;
 
     // The initial search finds a path from the start location to the nearest target location
     // The next iteration finds a path from that nearest target location to the next nearest target location
     // Loop repeats until all targets are found
     do {
+
+        // Paint origin and target cells
+        GRID_DATA[startLocationCopy.y][startLocationCopy.x].c = 1;
+        for (let pointsKey in targetLocationsCopy) {
+            GRID_DATA[targetLocationsCopy[pointsKey].y][targetLocationsCopy[pointsKey].x].c = 3;
+        }
+        renderGrid();
+
         let currentProblem = new Problem({
             initialState: startLocation,
             goalStates: targetLocations
@@ -123,11 +131,24 @@ async function approach1() {
         // Reset the colored frontier and explored set from previous search
         resetExploredFrontierColors();
 
+        // Paint the new cells
+        foundTarget.parent
+
+        drawPath(foundTarget);
+        // Paint origin and target cells
+        GRID_DATA[startLocationCopy.y][startLocationCopy.x].c = 1;
+        for (let pointsKey in targetLocationsCopy) {
+            GRID_DATA[targetLocationsCopy[pointsKey].y][targetLocationsCopy[pointsKey].x].c = 3;
+        }
+        renderGrid();
+
         // Repeat searches until no target locations are left
     } while (targetLocations.length > 0);
 }
 
-// TODO: will get deleted
-document.getElementById("btn_runBFS").onclick = (_) => {
-    approach1();
+function drawPath(node) {
+    if (node == null)
+        return;
+    GRID_DATA[node.state.y][node.state.x].c = 4;
+    drawPath(node.parent);
 }

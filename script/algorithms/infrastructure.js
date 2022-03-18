@@ -28,14 +28,18 @@ class Problem {
         for (const dirY in cellsToCheck) {
             for (const dirX in cellsToCheck) {
                 if (cellsToCheck[dirX] !== 0 || cellsToCheck[dirY] !== 0) {
-                    const dir = (cellsToCheck[dirY] > 0 ? "N" : (cellsToCheck[dirY] < 0 ? "S" : "") + cellsToCheck[dirX] > 0 ? "E" : (cellsToCheck[dirX] < 0 ? "W" : ""));
+                    
+                    const dir = ((cellsToCheck[dirY] > 0 ? "N" : (cellsToCheck[dirY] < 0 ? "S" : "")) +
+                    (cellsToCheck[dirX] > 0 ? "E" : (cellsToCheck[dirX] < 0 ? "W" : ""))); // Determine the compass direction
+
                     if (
                         x + cellsToCheck[dirX] >= 0 && x + cellsToCheck[dirX] < GRID_CELLS_X &&
                         y + cellsToCheck[dirY] >= 0 && y + cellsToCheck[dirY] < GRID_CELLS_Y &&
                         GRID_DATA[y + cellsToCheck[dirY]][x + cellsToCheck[dirX]].v !== -1
                     ) {
+                        console.log(dir.length);
                         rtn.push({
-                            v: GRID_DATA[y + cellsToCheck[dirY]][x + cellsToCheck[dirX]].v,
+                            v: (GRID_DATA[y + cellsToCheck[dirY]][x + cellsToCheck[dirX]].v)*dir.length,
                             x: x + cellsToCheck[dirX],
                             y: y + cellsToCheck[dirY],
                             d: dir

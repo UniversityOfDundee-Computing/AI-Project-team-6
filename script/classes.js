@@ -15,19 +15,19 @@ class Location {
     }
 }
 
-class Node {
-    state;
-    parent;
-    action;
-    pathCost;
+// class Node {
+//     state;
+//     parent;
+//     action;
+//     pathCost;
 
-    constructor(state, parent, action, pathCost) {
-        this.state = state;
-        this.parent = parent;
-        this.action = action;
-        this.pathCost = pathCost;
-    }
-    toString() {
-        return `Node(${this.state},${this.parent},${this.action},${this.pathCost})`
-    }
-}
+//     constructor(state, parent, action, pathCost) {
+//         this.state = state;
+//         this.parent = parent;
+//         this.action = action;
+//         this.pathCost = pathCost;
+//     }
+//     toString() {
+//         return `Node(${this.state},${this.parent},${this.action},${this.pathCost})`
+//     }
+// }

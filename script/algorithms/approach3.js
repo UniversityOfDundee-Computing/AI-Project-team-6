@@ -1,5 +1,5 @@
 // MinQueue used to help with the Astar method - https://github.com/luciopaiva/heapify
-const {MinQueue} = Heapify;
+const { MinQueue } = Heapify;
 
 /**
  * Calculate the optimal route based on the nearest neighbour approach
@@ -29,7 +29,7 @@ function nearestNeighbourAlgo(startX, startY, points, translatedRoutes) {
         });
 
         // add it to the route and set it to the current node and repeat until complete
-        if (shortest!==null) {
+        if (shortest !== null) {
             route.push(shortest);
             visitedNodes.add(shortest.start.toString());
             currentNode = shortest.end;
@@ -45,7 +45,7 @@ function nearestNeighbourAlgo(startX, startY, points, translatedRoutes) {
  * @param startY
  * @param points
  */
-async function algo3(startX = 0, startY = 0, points = [new Location(0,0)]) {
+async function algo3(startX = 0, startY = 0, points = [new Location(0, 0)]) {
     renderGrid();
     let routes = [];
     let routesList = [];
@@ -54,6 +54,14 @@ async function algo3(startX = 0, startY = 0, points = [new Location(0,0)]) {
     for (const pointDST of points) {
         const pointSRC = new Location(startX, startY);
         if (!pointSRC.equals(pointDST)) {
+
+            // Paint origin and target cells
+            GRID_DATA[startY][startX].c = 2;
+            for (let pointsKey in points) {
+                GRID_DATA[points[pointsKey].y][points[pointsKey].x].c = 3;
+            }
+            renderGrid();
+
             let path = await aStar(pointSRC, pointDST);
             if (path !== null)
                 routes.push(reconstructPath(path.cameFrom, path.current));
@@ -64,6 +72,14 @@ async function algo3(startX = 0, startY = 0, points = [new Location(0,0)]) {
     for (const pointSRC of points) {
         for (const pointDST of points) {
             if (!pointSRC.equals(pointDST)) {
+
+                // Paint origin and target cells
+                GRID_DATA[startY][startX].c = 2;
+                for (let pointsKey in points) {
+                    GRID_DATA[points[pointsKey].y][points[pointsKey].x].c = 3;
+                }
+                renderGrid();
+
                 let path = await aStar(pointSRC, pointDST);
                 if (path !== null)
                     routes.push(reconstructPath(path.cameFrom, path.current));
@@ -104,9 +120,9 @@ async function algo3(startX = 0, startY = 0, points = [new Location(0,0)]) {
     });
 
     // Paint origin and target cells
-    GRID_DATA[startY][startX].c = 1;
+    GRID_DATA[startY][startX].c = 2;
     for (let pointsKey in points) {
-        GRID_DATA[points[pointsKey].y][points[pointsKey].x].c = 2;
+        GRID_DATA[points[pointsKey].y][points[pointsKey].x].c = 3;
     }
 
     renderGrid();
@@ -178,9 +194,10 @@ async function aStar(pointSRC, pointDST) {
 
         // test if the current node is the end node if so, return the parents and current node for path reconstruction
         if (current.equals(pointDST))
-            return {cameFrom, current};
+            return { cameFrom, current };
 
-        fillSquareOnGridFromLocation(current, "rgb(128,0,255)");
+        // Fill in current node to visualise algorithm
+        fillSquareOnGridFromLocation(current, "rgb(0,0,0)");
 
         // Get the relevant neighbour cells / actions
         const actions = getNeighbourValues(current.x, current.y);
@@ -206,7 +223,9 @@ async function aStar(pointSRC, pointDST) {
             }
         });
 
-        await new Promise(r => setTimeout(r, SLEEP_TIME));
+        // Add a delay to visualise the algorithm
+        if (isVisualisationDelayOn)
+            await timer(visualisationDelayAmount);
     }
     return null;
 }

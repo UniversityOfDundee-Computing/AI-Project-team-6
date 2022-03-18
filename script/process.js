@@ -1,8 +1,10 @@
+let isVisualisationDelayOn = true;
+let visualisationDelayAmount = 1;
+
 const CANVAS = document.getElementById("main_canvas");
 const CONTEXT = CANVAS.getContext("2d");
 
 const GRID_OUTLINE = "rgba(255,0,0,0.5)";
-const SLEEP_TIME = 1;
 
 let GRID_CELLS_X = 1;
 let GRID_CELLS_Y = 1;
@@ -16,18 +18,10 @@ for (let y = 0; y < GRID_CELLS_Y; y++) {
 // Test Code
 fetch("map.cfg").then((d) => {
     d.json().then((data) => {
-        findPath(data, new Location(23, 7), [
-            new Location(9, 26),
-            new Location(27, 25),
-            new Location(35, 26),
-            new Location(44, 25),
-            new Location(21, 23),
-            new Location(14, 22),
-            new Location(13, 15)
-        ], "approach3");
-    })
+        console.log('data');
+        importFrom2dArr(data);
+    });
 })
-
 
 /**
  * Render updates to the canvas grid
@@ -44,24 +38,31 @@ function renderGrid() {
             // Legacy colour picking code and rendering code - mostly replaced with fillSquareOnGrid()
             switch (GRID_DATA[y][x].c) {
                 case -1:
+                    // transparent background
                     colour = "rgba(255,255,255,0)";
                     break;
                 case 0:
-                    colour = "rgba(255,0,0,0.8)";
+                    // gray
+                    colour = "rgba(100,100,100,0.8)";
                     break;
                 case 1:
-                    colour = "rgba(0,255,0,0.8)";
+                    // magenta
+                    colour = "rgba(255,0,255,0.8)";
                     break;
                 case 2:
+                    // blue
                     colour = "rgba(0,0,255,0.8)";
                     break;
                 case 3:
-                    colour = "rgba(255,0,255,0.8)";
+                    // green
+                    colour = "rgba(0,255,0,0.8)";
                     break;
                 case 4:
-                    colour = "rgba(0,255,255,0.8)";
+                    // cyan
+                    colour = "rgba(255,255,0,0.8)";
                     break;
                 case 5:
+                    // yellow
                     colour = "rgba(255,255,0,0.8)";
                     break;
             }
@@ -88,6 +89,7 @@ function importFrom2dArr(arr) {
     // Add the real data
     arr.forEach((row) => {
         GRID_DATA.push([]);
+        let x = 0;
         row.forEach((cell) => {
             GRID_DATA[y][x] = { v: cell, c: (cell === -1 ? 0 : -1) }
             x++;
@@ -112,6 +114,7 @@ function fillSquareOnGrid(x, y, colour) {
 
     CONTEXT.fillRect(x * cellWidth, y * cellHeight, cellWidth, cellHeight); // Background
     CONTEXT.strokeRect(x * cellWidth, y * cellHeight, cellWidth, cellHeight); // Outline
+}
 
 /**
  * Wrapper to use Location objects
@@ -166,15 +169,17 @@ function getNeighbourValues(x, y) {
     for (const dirY in cellsToCheck) {
         for (const dirX in cellsToCheck) {
             if (cellsToCheck[dirX] !== 0 || cellsToCheck[dirY] !== 0) { // verify we are not testing the cell itself
-                const dir = (cellsToCheck[dirY] > 0 ? "N" : (cellsToCheck[dirY] < 0 ? "S" : "") +
-                cellsToCheck[dirX] > 0 ? "E" : (cellsToCheck[dirX] < 0 ? "W" : "")); // Determine the compass direction
+                
+                const dir = ((cellsToCheck[dirY] > 0 ? "N" : (cellsToCheck[dirY] < 0 ? "S" : "")) +
+                (cellsToCheck[dirX] > 0 ? "E" : (cellsToCheck[dirX] < 0 ? "W" : ""))); // Determine the compass direction
+                
                 if (
                     x + cellsToCheck[dirX] >= 0 && x + cellsToCheck[dirX] < GRID_CELLS_X && // Range Checks
                     y + cellsToCheck[dirY] >= 0 && y + cellsToCheck[dirY] < GRID_CELLS_Y &&
                     GRID_DATA[y + cellsToCheck[dirY]][x + cellsToCheck[dirX]].v !== -1 // Removes obstructed cells
                 ) {
                     rtn.push({
-                        v: GRID_DATA[y + cellsToCheck[dirY]][x + cellsToCheck[dirX]].v,
+                        v: (GRID_DATA[y + cellsToCheck[dirY]][x + cellsToCheck[dirX]].v) * dir.length,
                         x: x + cellsToCheck[dirX],
                         y: y + cellsToCheck[dirY],
                         d: dir
@@ -200,6 +205,7 @@ function checkIfArrayContainsState(array, state) {
     });
 
     return doesElementExist;
+}
 
 /**
  * Called to trigger any of the algorithms
@@ -208,13 +214,12 @@ function checkIfArrayContainsState(array, state) {
  * @param targets
  * @param method
  */
-function findPath(map = [[-1]], startLocation = new Location(0, 0),
-                  targets = Location[0], method = "approach3") {
-
-    importFrom2dArr(map);
+function findPath(startLocation = new Location(0, 0),
+    targets = Location[0], method = "approach3") {
 
     switch (method) {
         case "approach1":
+            approach1(startLocation, targets)
             break;
         case "approach3":
             algo3(startLocation.x, startLocation.y, targets);
@@ -222,4 +227,17 @@ function findPath(map = [[-1]], startLocation = new Location(0, 0),
         default:
             console.error("Unknown method: '" + method + "'");
     }
+}
+
+// TODO: will get deleted
+document.getElementById("btn_runBFS").onclick = (_) => {
+    findPath(new Location(23, 7), [
+        new Location(9, 26),
+        new Location(27, 25),
+        new Location(35, 26),
+        new Location(44, 25),
+        new Location(21, 23),
+        new Location(14, 22),
+        new Location(13, 15)
+    ], "approach3");
 }
