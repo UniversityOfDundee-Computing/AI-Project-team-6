@@ -15,6 +15,16 @@ nav{
     background-color: #690375;
     color: white;
 }
+
+select{
+     background-color: #690375;
+     color: white;
+}
+
+.btn:hover{
+    color: #28d6c5;
+}
+
 canvas {
     cursor: pointer;
 }

@@ -33,8 +33,15 @@
             <button class="btn m-1 my-2" id="btn_Eraser">Eraser</button>
         </div>
         <div class="container btn-group">
-            <button class="btn m-1 my-2" id="btn_startLocation">Mark Start Location</button>
-            <button class="btn m-1 my-2" id="btn_markTargets">Mark Target</button>
+            <button class="btn m-1 my-2" id="btn_FindPath">Find Path</button>
+            <button class="btn m-1 my-2" id="btn_markTargets">
+                  <label for="cars">Algorithm:</label>
+                    <select name="approach" id="approaches">
+                      <option value="APP1">Approach 1</option>
+                      <option value="APP2">Approach 2</option>
+                      <option value="APP3">Approach 3</option>
+                    </select>
+            </button>
             <button class="btn m-1 my-2 col-2" id="btn_setCellWeight">
                 <input class="form-check-input" type="radio" name="visualization" id="setVisualtion" value="VIS">
                 <label class="form-check-label" for="VisualizationOnOff">
