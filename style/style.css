@@ -1,7 +1,20 @@
 body {
     overflow-x: hidden;
+    background-color: #D62839;
 }
 
+nav{
+    background-color: #D62839;
+}
+
+.card{
+    background-color: #D62839;
+}
+
+.btn{
+    background-color: #690375;
+    color: white;
+}
 canvas {
     cursor: pointer;
 }
