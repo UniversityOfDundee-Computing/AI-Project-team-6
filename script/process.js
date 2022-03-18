@@ -1,3 +1,12 @@
+// MinQueue used to help with the Astar method - https://github.com/luciopaiva/heapify
+let {MinQueue} = {MinQueue:null};
+
+try {
+    MinQueue = Heapify.MinQueue;
+} catch (e) {
+    MinQueue = require("../api_server/node_modules/heapify/heapify").MinQueue;
+}
+
 let isVisualisationDelayOn = true;
 let visualisationDelayAmount = 1;
 
