@@ -1,0 +1,20 @@
+{
+  "name": "api_server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "heapify": "^0.6.0",
+    "http": "0.0.1-security",
+    "mime-types": "^2.1.35",
+    "path": "^0.12.7",
+    "url": "^0.11.0"
+  }
+}

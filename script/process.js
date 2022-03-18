@@ -1,5 +1,11 @@
 // MinQueue used to help with the Astar method - https://github.com/luciopaiva/heapify
-const {MinQueue} = Heapify;
+let {MinQueue} = {MinQueue:null};
+
+try {
+    MinQueue = Heapify.MinQueue;
+} catch (e) {
+    MinQueue = require("../api_server/node_modules/heapify/heapify").MinQueue;
+}
 
 const CANVAS = document.getElementById("main_canvas");
 const CONTEXT = CANVAS.getContext("2d");
