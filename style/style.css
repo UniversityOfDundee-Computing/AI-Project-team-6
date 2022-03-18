@@ -2,6 +2,9 @@ body {
     overflow-x: hidden;
 }
 
+canvas {
+    cursor: pointer;
+}
 
 #main{
     top: 0;
