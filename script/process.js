@@ -4,16 +4,14 @@ const CONTEXT = CANVAS.getContext("2d");
 const GRID_OUTLINE = "rgba(255,0,0,0.5)";
 const SLEEP_TIME = 1;
 
-
 let GRID_CELLS_X = 1;
 let GRID_CELLS_Y = 1;
 let GRID_DATA = [];
 for (let y = 0; y < GRID_CELLS_Y; y++) {
     GRID_DATA.push([]);
     for (let x = 0; x < GRID_CELLS_X; x++)
-        GRID_DATA[y].push({v: 0, c: -1});
+        GRID_DATA[y].push({ v: 0, c: -1 });
 }
-
 
 // Test Code
 fetch("map.cfg").then((d) => {
@@ -91,19 +89,12 @@ function importFrom2dArr(arr) {
     arr.forEach((row) => {
         GRID_DATA.push([]);
         row.forEach((cell) => {
-            GRID_DATA[y].push({v: cell, c: (cell === -1 ? 0 : -1)});
+            GRID_DATA[y][x] = { v: cell, c: (cell === -1 ? 0 : -1) }
+            x++;
         })
         y++;
     })
-}
-
-/**
- * Wrapper to use Location objects
- * @param location
- * @param colour
- */
-function fillSquareOnGridFromLocation(location, colour) {
-    fillSquareOnGrid(location.x, location.y, colour)
+    renderGrid();
 }
 
 /**
@@ -121,7 +112,29 @@ function fillSquareOnGrid(x, y, colour) {
 
     CONTEXT.fillRect(x * cellWidth, y * cellHeight, cellWidth, cellHeight); // Background
     CONTEXT.strokeRect(x * cellWidth, y * cellHeight, cellWidth, cellHeight); // Outline
+
+/**
+ * Wrapper to use Location objects
+ * @param location
+ * @param colour
+ */
+function fillSquareOnGridFromLocation(location, colour) {
+    fillSquareOnGrid(location.x, location.y, colour)
 }
+
+// TODO: fix if we want it
+function resetExploredFrontierColors() {
+    // let mergedArrays = exploredColoredCells.concat(frontierColoredCells);
+
+    // mergedArrays.forEach(cell => { 
+    //     CONTEXT.clearRect(cell.x * (CANVAS.width / GRID_CELLS_X), cell.y * (CANVAS.height / GRID_CELLS_Y),
+    //     (CANVAS.width / GRID_CELLS_X), (CANVAS.height / GRID_CELLS_Y));
+    // });
+}
+
+// Line taken from https://stackoverflow.com/questions/3583724/how-do-i-add-a-delay-in-a-javascript-loop
+// Returns a Promise that resolves after "ms" Milliseconds
+const timer = ms => new Promise(res => setTimeout(res, ms))
 
 
 /**
@@ -172,6 +185,21 @@ function getNeighbourValues(x, y) {
     }
     return rtn;
 }
+
+function checkIfArrayContainsNode(array, node) {
+    let doesElementExist = array.some(e => {
+        return (e.state.x === node.state.x && e.state.y === node.state.y);
+    });
+
+    return doesElementExist;
+}
+
+function checkIfArrayContainsState(array, state) {
+    let doesElementExist = array.some(e => {
+        return (e.x === state.x && e.y === state.y);
+    });
+
+    return doesElementExist;
 
 /**
  * Called to trigger any of the algorithms
