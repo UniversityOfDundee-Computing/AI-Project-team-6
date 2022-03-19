@@ -8,7 +8,8 @@ nav{
 }
 
 .card{
-    background-color: #D62839;
+    color: black !important;
+    /*background-color: #D62839;*/
 }
 
 .btn{
