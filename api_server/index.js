@@ -54,6 +54,8 @@ server.listen(SERVER_PORT, HTTP_HOST, () => {
 
 function handleAPI(req, res) {
     // Import the algorithms
+    const process = require("./fromClient/process");
+    const Location = require("./fromClient/classes").Location;
 
     // gather the POST data
     let chunks = '';
@@ -96,7 +98,9 @@ function handleAPI(req, res) {
 
             // generate api response and call algorithm
             let apiResponse = {};
-            apiResponse = findPath(data.map, new Location(data.start.x, data.start.y), targets, data.approach);
+            process.importFrom2dArr(data.map);
+
+            apiResponse = process.findPath(new Location(data.start.x, data.start.y), targets, data.approach);
             //reply
             res.end(JSON.stringify(apiResponse));
         } catch (e) {
