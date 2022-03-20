@@ -7,34 +7,49 @@
           integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link rel="stylesheet" href="style/style.css">
 </head>
-<body class="bg-dark text-light">
+<body class="text-light">
+<!-- <nav class="navbar navbar-light bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand text-light ms-5" href="index.html"><h1>Map Designer</h1></a>
+    <span class="navbar-text text-light mt-4">
+        <a class="navbar-brand text-light" href="index.html"><h1>Demo</h1></a>
+      </span>
+  </div>
+</nav> -->
 <div id="main" class="container-md">
-    <h1>Map Designer</h1>
+    <nav class="navbar navbar-light">
+      <div class="container-fluid">
+        <a class="navbar-brand text-light" href="index.html"><h1>Map Designer</h1></a>
+        <span class="navbar-text text-light mt-4">
+            <a class="navbar-brand text-light" href="demo.html"><h1>Demo</h1></a>
+          </span>
+      </div>
+    </nav>
     <canvas id="main_canvas" width="1024" height="512" class="w-100 mx-auto"></canvas>
     <div class="card">
         <div class="container-md btn-group mt-2">
-            <button class="btn btn-primary m-1 my-2 col-2" id="btn_import">Import Image</button>
-            <button class="btn btn-primary m-1 my-2 col-2" id="btn_import_map">Import Map</button>
-            <button class="btn btn-warning m-1 my-2 col-2" id="btn_markObstruction">
+            <button class="btn m-1 my-2 col-2" id="btn_import">Import Image</button>
+            <button class="btn m-1 my-2 col-2" id="btn_import_map">Import Map</button>
+            <button class="btn m-1 my-2 col-2" id="btn_markObstruction">
                 <input class="form-check-input" type="radio" name="markers" id="markObstruction" value="OBS"
                        checked>
                 <label class="form-check-label" for="markObstruction">
                     Mark Obstruction
                 </label>
             </button>
-            <button class="btn btn-warning m-1 my-2 col-2" id="btn_setCellWeight">
+            <button class="btn  m-1 my-2 col-2" id="btn_setCellWeight">
                 <input class="form-check-input" type="radio" name="markers" id="setCellWeight" value="WEI">
                 <label class="form-check-label" for="setCellWeight">
                     Set Cell Weight
                 </label>
             </button>
-            <button class="btn btn-warning m-1 my-2 col-2" id="btn_markDamaged">
+            <button class="btn m-1 my-2 col-2" id="btn_markDamaged">
                 <input class="form-check-input" type="radio" name="markers" id="markDamaged" value="DAM">
                 <label class="form-check-label" for="markDamaged">
                     Mark Damaged Floor
                 </label>
             </button>
-            <button class="btn btn-warning m-1 my-2 col-2" id="btn_eraser">
+            <button class="btn m-1 my-2 col-2" id="btn_eraser">
                 <input class="form-check-input" type="radio" name="markers" id="eraser" value="ERA">
                 <label class="form-check-label" for="eraser">
                     Eraser
@@ -42,8 +57,8 @@
             </button>
         </div>
         <div class="container btn-group">
-            <button class="btn btn-danger m-1 my-2" id="btn_clear">Clear Grid</button>
-            <button class="btn btn-success m-1 my-2" id="btn_export">Export Map</button>
+            <button class="btn m-1 my-2" id="btn_clear">Clear Grid</button>
+            <button class="btn m-1 my-2" id="btn_export">Export Map</button>
         </div>
     </div>
 </div>

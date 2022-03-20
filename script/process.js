@@ -1,17 +1,13 @@
-// MinQueue used to help with the Astar method - https://github.com/luciopaiva/heapify
-let {MinQueue} = {MinQueue:null};
-
-try {
-    MinQueue = Heapify.MinQueue;
-} catch (e) {
-    MinQueue = require("../api_server/node_modules/heapify/heapify").MinQueue;
-}
-
 let isVisualisationDelayOn = true;
+let isVisualisationOn = true;
 let visualisationDelayAmount = 1;
+let CANVAS;
+let CONTEXT;
 
-const CANVAS = document.getElementById("main_canvas");
-const CONTEXT = CANVAS.getContext("2d");
+if (typeof window !== 'undefined') { // test if running on api server
+    CANVAS = document.getElementById("main_canvas");
+    CONTEXT = CANVAS.getContext("2d");
+}
 
 const GRID_OUTLINE = "rgba(255,0,0,0.5)";
 
@@ -21,62 +17,56 @@ let GRID_DATA = [];
 for (let y = 0; y < GRID_CELLS_Y; y++) {
     GRID_DATA.push([]);
     for (let x = 0; x < GRID_CELLS_X; x++)
-        GRID_DATA[y].push({ v: 0, c: -1 });
+        GRID_DATA[y].push({v: 0, c: -1});
 }
-
-// Test Code
-fetch("map.cfg").then((d) => {
-    d.json().then((data) => {
-        console.log('data');
-        importFrom2dArr(data);
-    });
-})
 
 /**
  * Render updates to the canvas grid
  */
 function renderGrid() {
-    CONTEXT.fillStyle = "white";
-    CONTEXT.fillRect(0, 0, CANVAS.width, CANVAS.height);
+    if (typeof window !== 'undefined') { // test if running on api server
+        CONTEXT.fillStyle = "white";
+        CONTEXT.fillRect(0, 0, CANVAS.width, CANVAS.height);
 
-    CONTEXT.lineWidth = 2;
-    for (let y = 0; y < GRID_CELLS_Y; y++) {
-        for (let x = 0; x < GRID_CELLS_X; x++) {
-            let colour;
+        CONTEXT.lineWidth = 2;
+        for (let y = 0; y < GRID_CELLS_Y; y++) {
+            for (let x = 0; x < GRID_CELLS_X; x++) {
+                let colour;
 
-            // Legacy colour picking code and rendering code - mostly replaced with fillSquareOnGrid()
-            switch (GRID_DATA[y][x].c) {
-                case -1:
-                    // transparent background
-                    colour = "rgba(255,255,255,0)";
-                    break;
-                case 0:
-                    // gray
-                    colour = "rgba(100,100,100,0.8)";
-                    break;
-                case 1:
-                    // magenta
-                    colour = "rgba(255,0,255,0.8)";
-                    break;
-                case 2:
-                    // blue
-                    colour = "rgba(0,0,255,0.8)";
-                    break;
-                case 3:
-                    // green
-                    colour = "rgba(0,255,0,0.8)";
-                    break;
-                case 4:
-                    // cyan
-                    colour = "rgba(255,255,0,0.8)";
-                    break;
-                case 5:
-                    // yellow
-                    colour = "rgba(255,255,0,0.8)";
-                    break;
+                // Legacy colour picking code and rendering code - mostly replaced with fillSquareOnGrid()
+                switch (GRID_DATA[y][x].c) {
+                    case -1:
+                        // transparent background
+                        colour = "rgba(255,255,255,0)";
+                        break;
+                    case 0:
+                        // gray
+                        colour = "rgba(100,100,100,0.8)";
+                        break;
+                    case 1:
+                        // magenta
+                        colour = "rgba(255,0,255,0.8)";
+                        break;
+                    case 2:
+                        // blue
+                        colour = "rgba(0,0,255,0.8)";
+                        break;
+                    case 3:
+                        // green
+                        colour = "rgba(0,255,0,0.8)";
+                        break;
+                    case 4:
+                        // cyan
+                        colour = "rgba(255,255,0,0.8)";
+                        break;
+                    case 5:
+                        // yellow
+                        colour = "rgba(255,255,0,0.8)";
+                        break;
+                }
+
+                fillSquareOnGrid(x, y, colour);
             }
-
-            fillSquareOnGrid(x, y, colour);
         }
     }
 }
@@ -100,7 +90,7 @@ function importFrom2dArr(arr) {
         GRID_DATA.push([]);
         let x = 0;
         row.forEach((cell) => {
-            GRID_DATA[y][x] = { v: cell, c: (cell === -1 ? 0 : -1) }
+            GRID_DATA[y][x] = {v: cell, c: (cell === -1 ? 0 : -1)}
             x++;
         })
         y++;
@@ -115,14 +105,16 @@ function importFrom2dArr(arr) {
  * @param colour
  */
 function fillSquareOnGrid(x, y, colour) {
-    const cellWidth = (CANVAS.width / GRID_CELLS_X);
-    const cellHeight = (CANVAS.width / GRID_CELLS_X);
+    if (typeof window !== 'undefined') { // test if running on api server
+        const cellWidth = (CANVAS.width / GRID_CELLS_X);
+        const cellHeight = (CANVAS.width / GRID_CELLS_X);
 
-    CONTEXT.fillStyle = colour;
-    CONTEXT.strokeStyle = GRID_OUTLINE;
+        CONTEXT.fillStyle = colour;
+        CONTEXT.strokeStyle = GRID_OUTLINE;
 
-    CONTEXT.fillRect(x * cellWidth, y * cellHeight, cellWidth, cellHeight); // Background
-    CONTEXT.strokeRect(x * cellWidth, y * cellHeight, cellWidth, cellHeight); // Outline
+        CONTEXT.fillRect(x * cellWidth, y * cellHeight, cellWidth, cellHeight); // Background
+        CONTEXT.strokeRect(x * cellWidth, y * cellHeight, cellWidth, cellHeight); // Outline
+    }
 }
 
 /**
@@ -178,10 +170,10 @@ function getNeighbourValues(x, y) {
     for (const dirY in cellsToCheck) {
         for (const dirX in cellsToCheck) {
             if (cellsToCheck[dirX] !== 0 || cellsToCheck[dirY] !== 0) { // verify we are not testing the cell itself
-                
+
                 const dir = ((cellsToCheck[dirY] > 0 ? "N" : (cellsToCheck[dirY] < 0 ? "S" : "")) +
-                (cellsToCheck[dirX] > 0 ? "E" : (cellsToCheck[dirX] < 0 ? "W" : ""))); // Determine the compass direction
-                
+                    (cellsToCheck[dirX] > 0 ? "E" : (cellsToCheck[dirX] < 0 ? "W" : ""))); // Determine the compass direction
+
                 if (
                     x + cellsToCheck[dirX] >= 0 && x + cellsToCheck[dirX] < GRID_CELLS_X && // Range Checks
                     y + cellsToCheck[dirY] >= 0 && y + cellsToCheck[dirY] < GRID_CELLS_Y &&
@@ -224,7 +216,7 @@ function checkIfArrayContainsState(array, state) {
  * @param method
  */
 function findPath(startLocation = new Location(0, 0),
-    targets = Location[0], method = "approach3") {
+                  targets = Location[0], method = "approach3") {
 
     switch (method) {
         case "approach1":
@@ -236,17 +228,4 @@ function findPath(startLocation = new Location(0, 0),
         default:
             console.error("Unknown method: '" + method + "'");
     }
-}
-
-// TODO: will get deleted
-document.getElementById("btn_runBFS").onclick = (_) => {
-    findPath(new Location(23, 7), [
-        new Location(9, 26),
-        new Location(27, 25),
-        new Location(35, 26),
-        new Location(44, 25),
-        new Location(21, 23),
-        new Location(14, 22),
-        new Location(13, 15)
-    ], "approach3");
 }

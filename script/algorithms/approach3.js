@@ -1,5 +1,11 @@
 // MinQueue used to help with the Astar method - https://github.com/luciopaiva/heapify
-const { MinQueue } = Heapify;
+let MinQueue;
+
+try {
+    MinQueue = Heapify.MinQueue;
+} catch (e) {
+    MinQueue = require("../api_server/node_modules/heapify/heapify").MinQueue;
+}
 
 /**
  * Calculate the optimal route based on the nearest neighbour approach
@@ -197,14 +203,16 @@ async function aStar(pointSRC, pointDST) {
             return { cameFrom, current };
 
         // Fill in current node to visualise algorithm
-        fillSquareOnGridFromLocation(current, "rgb(0,0,0)");
+        if (isVisualisationOn)
+            fillSquareOnGridFromLocation(current, "rgb(0,0,0)");
 
         // Get the relevant neighbour cells / actions
         const actions = getNeighbourValues(current.x, current.y);
 
         // iterate over the neighbours of the current cell
         actions.forEach((current_neighbour) => {
-            fillSquareOnGridFromLocation(current_neighbour, "rgb(0,180,255)");
+            if (isVisualisationOn)
+                fillSquareOnGridFromLocation(current_neighbour, "rgb(0,180,255)");
             // Calculate the score of the current neighbour from the current node
             const tentative_gScore = gScore[current] + current_neighbour.v + 1;
 
