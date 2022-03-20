@@ -65,6 +65,16 @@ document.getElementById("btn_export").onclick = (_) => {
     downloadFile(JSON.stringify(GRID_DATA), "map.cfg", "application/json");
 }
 
+document.getElementById("btn_continue").onclick = (_) => {
+
+    // LZString - a string compression library allowing us to store all the data in a browser cooke for serverless
+    // transfer of data between pages with ease - data is first JSON-ified, then converted to base 64 to avoid too many
+    // odd characters, then compressed using LZString, and then escaped into cookie safe characters
+    document.cookie = ("AI_MAP=" + escape(LZString.compress(btoa(JSON.stringify(GRID_DATA)))) + ";");
+
+    window.location = "demo.html";
+}
+
 document.getElementById("btn_import").onclick = (_) => {
     document.getElementById("imageUpload").click();
 }
