@@ -219,8 +219,11 @@ function findPath(startLocation = new Location(0, 0),
                   targets = Location[0], method = "approach3") {
 
     switch (method) {
-        case "approach1":
-            approach1(startLocation, targets)
+        case "uninformed-breadth-first":
+            runAnUninformedSearch(startLocation, targets, "breadth-first")
+            break;
+        case "uninformed-uniform-cost":
+            runAnUninformedSearch(startLocation, targets, "uniform-cost")
             break;
         case "approach3":
             algo3(startLocation.x, startLocation.y, targets);
