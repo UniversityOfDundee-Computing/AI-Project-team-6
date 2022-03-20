@@ -33,7 +33,8 @@ async function breadthFirstSearch(problem) {
         explored.push(parentNode.state);
 
         // Fill the current cell to visualise which cell is being expanded
-        fillSquareOnGridFromLocation(parentNode.state, "black");
+        if (isVisualisationOn)
+            fillSquareOnGridFromLocation(parentNode.state, "black");
 
         // Get the possible actions from the current node
         let actions = problem.getActions(parentNode.state);
@@ -67,7 +68,8 @@ async function breadthFirstSearch(problem) {
                 // Add the node to the frontier to be expanded in the next step
                 frontier.push(childNode);
                 // Fill the cell with colour to visualise the frontier set
-                fillSquareOnGridFromLocation(childNode.state, "blue");
+                if (isVisualisationOn)
+                    fillSquareOnGridFromLocation(childNode.state, "blue");
             }
 
             // Add a delay to visualise the algorithm
@@ -76,7 +78,8 @@ async function breadthFirstSearch(problem) {
         }
 
         // Fill the cell with colour to visualise the explored set
-        fillSquareOnGridFromLocation(parentNode.state, "aqua");
+        if (isVisualisationOn)
+            fillSquareOnGridFromLocation(parentNode.state, "aqua");
 
         if (i++ > 500)
             return;

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="style/style.css">
+</head>
+<body class="text-light">
+<div id="main" class="container-md">
+    <nav class="navbar navbar-light">
+        <div class="container-fluid">
+            <a class="navbar-brand text-light" href="index.html"><h1>Map Designer</h1></a>
+            <span class="navbar-text text-light mt-4">
+              <a class="navbar-brand text-light" href="demo.html"><h1>Demo</h1></a>
+          </span>
+        </div>
+    </nav>
+    <canvas id="main_canvas" width="1024" height="512" class="w-100 mx-auto"></canvas>
+    <div class="card">
+        <div class="btn-group">
+            <button class="btn m-1 my-2" id="btn_markStart">Mark Start Location</button>
+            <button class="btn m-1 my-2" id="btn_markTarget">Mark Targets</button>
+            <button class="btn m-1 my-2" id="btn_eraser">Eraser</button>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="mx-auto w-75">
+                    <button class="btn my-2 w-100" id="goBtn">Find Path</button>
+                </div>
+            </div>
+            <div class="col">
+                <select class="form-select my-2 w-75 mx-auto" id="method">
+                    <option selected value="approach1">Approach 1</option>
+                    <option value="approach2">Approach 2</option>
+                    <option value="approach3">Approach 3</option>
+                </select>
+            </div>
+            <div class="col">
+                <div class="form-check my-2 mt-3">
+                    <input class="form-check-input" type="checkbox" value="" id="isViz">
+                    <label class="form-check-label" for="isViz">
+                        Show Visualisation
+                    </label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-check my-2 mt-3">
+                    <input class="form-check-input" type="checkbox" value="" id="isDelay">
+                    <label class="form-check-label" for="isDelay">
+                        Add Delay to execution
+                    </label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group my-2 w-75 mx-auto">
+                    <input type="text" class="form-control" id="delayAmount" placeholder="0"
+                           aria-label="Delay amount (ms)"
+                           aria-describedby="delayAmountLbl">
+                    <span class="input-group-text" id="delayAmountLbl">ms</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<input class="d-none m-0 p-0" width="0" height="0" type="file" aria-label="imageUpload" id="imageUpload"
+       accept="image/png, image/jpeg, image/bmp">
+<input class="d-none m-0 p-0" width="0" height="0" type="file" aria-label="CFGUpload" id="CFGUpload"
+       accept=".cfg, text/plain">
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+<script src="https://unpkg.com/heapify"></script>
+<script src="script/classes.js"></script>
+<script src="script/algorithms/infrastructure.js"></script>
+<script src="script/algorithms/approach1.js"></script>
+<script src="script/algorithms/approach3.js"></script>
+<script src="script/process.js"></script>
+<script src="script/demo.js"></script>
+</body>
+</html>

@@ -1,5 +1,29 @@
 body {
     overflow-x: hidden;
+    background-color: #D62839;
+}
+
+nav{
+    background-color: #D62839;
+}
+
+.card{
+    color: black !important;
+    /*background-color: #D62839;*/
+}
+
+.btn{
+    background-color: #690375;
+    color: white;
+}
+
+select{
+     background-color: #690375;
+     color: white;
+}
+
+.btn:hover{
+    color: #28d6c5;
 }
 
 canvas {
