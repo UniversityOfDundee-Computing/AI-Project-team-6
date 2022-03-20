@@ -1,13 +1,13 @@
 // MinQueue used to help with the Astar method - https://github.com/luciopaiva/heapify
-let {MinQueue} = {MinQueue:null};
+// let {MinQueue} = {MinQueue:null};
 
 try {
     MinQueue = Heapify.MinQueue;
 } catch (e) {
-    MinQueue = require("../api_server/node_modules/heapify/heapify").MinQueue;
+    // MinQueue = require("../api_server/node_modules/heapify/heapify").MinQueue;
 }
 
-let isVisualisationDelayOn = true;
+let isVisualisationDelayOn = false;
 let visualisationDelayAmount = 1;
 
 const CANVAS = document.getElementById("main_canvas");
@@ -178,10 +178,10 @@ function getNeighbourValues(x, y) {
     for (const dirY in cellsToCheck) {
         for (const dirX in cellsToCheck) {
             if (cellsToCheck[dirX] !== 0 || cellsToCheck[dirY] !== 0) { // verify we are not testing the cell itself
-                
+
                 const dir = ((cellsToCheck[dirY] > 0 ? "N" : (cellsToCheck[dirY] < 0 ? "S" : "")) +
-                (cellsToCheck[dirX] > 0 ? "E" : (cellsToCheck[dirX] < 0 ? "W" : ""))); // Determine the compass direction
-                
+                    (cellsToCheck[dirX] > 0 ? "E" : (cellsToCheck[dirX] < 0 ? "W" : ""))); // Determine the compass direction
+
                 if (
                     x + cellsToCheck[dirX] >= 0 && x + cellsToCheck[dirX] < GRID_CELLS_X && // Range Checks
                     y + cellsToCheck[dirY] >= 0 && y + cellsToCheck[dirY] < GRID_CELLS_Y &&
@@ -227,8 +227,11 @@ function findPath(startLocation = new Location(0, 0),
     targets = Location[0], method = "approach3") {
 
     switch (method) {
-        case "approach1":
-            approach1(startLocation, targets)
+        case "uninformed-breadth-first":
+            runAnUninformedSearch(startLocation, targets, "breadth-first")
+            break;
+        case "uninformed-uniform-cost":
+            runAnUninformedSearch(startLocation, targets, "uniform-cost")
             break;
         case "approach3":
             algo3(startLocation.x, startLocation.y, targets);
@@ -240,6 +243,10 @@ function findPath(startLocation = new Location(0, 0),
 
 // TODO: will get deleted
 document.getElementById("btn_runBFS").onclick = (_) => {
+    // Possible values:
+    // uninformed-breadth-first
+    // uninformed-uniform-cost
+    // approach3
     findPath(new Location(23, 7), [
         new Location(9, 26),
         new Location(27, 25),
