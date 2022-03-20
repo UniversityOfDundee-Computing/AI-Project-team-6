@@ -3,6 +3,35 @@ let TARGET_LOCATIONS = [];
 let GRID_MODE = "SRT";
 
 
+importFrom2dArr( // Import from a 2d json array
+    JSON.parse( // Parse the decoded data into a json object
+        atob( // Decode the base64
+            LZString.decompress( // Decompress the data
+                unescape( // unescape the escaped characters
+                    getCookie() // get the data cookie
+                )
+            )
+        )
+    )
+);
+
+
+function getCookie() {
+    let name = "AI_MAP=";
+    let decodedCookie = (document.cookie);
+    let ca = decodedCookie.split(';');
+    for (let c of ca) {
+        while (c.charAt(0) === ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) === 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+
 document.getElementById("goBtn").onclick = (_) => {
     isVisualisationOn = document.getElementById("isViz").checked;
     isVisualisationDelayOn = document.getElementById("isDelay").checked;
@@ -29,13 +58,13 @@ CANVAS.onmousemove = (event) => {
         addPoint(event);
 }
 
-// Test Code
+/*// Test Code
 fetch("map.cfg").then((d) => {
     d.json().then((data) => {
         console.log('data');
         importFrom2dArr(data);
     });
-})
+})*/
 
 
 function addPoint(event) {
