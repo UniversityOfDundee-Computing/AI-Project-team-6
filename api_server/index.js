@@ -54,9 +54,6 @@ server.listen(SERVER_PORT, HTTP_HOST, () => {
 
 function handleAPI(req, res) {
     // Import the algorithms
-    /*require("../script/algorithms/approach1");
-    require("../script/algorithms/approach3");
-    require("../script/process");*/
 
     // gather the POST data
     let chunks = '';

@@ -1,11 +1,5 @@
 // MinQueue used to help with the Astar method - https://github.com/luciopaiva/heapify
-let MinQueue;
-
-try {
-    MinQueue = Heapify.MinQueue;
-} catch (e) {
-    MinQueue = require("../api_server/node_modules/heapify/heapify").MinQueue;
-}
+let MinQueue = Heapify.MinQueue;
 
 /**
  * Calculate the optimal route based on the nearest neighbour approach
@@ -51,7 +45,7 @@ function nearestNeighbourAlgo(startX, startY, points, translatedRoutes) {
  * @param startY
  * @param points
  */
-async function algo3(startX = 0, startY = 0, points = [new Location(0, 0)]) {
+async function algo3(startX, startY, points) {
     renderGrid();
     let routes = [];
     let routesList = [];
