@@ -16,6 +16,7 @@ importFrom2dArr( // Import from a 2d json array
 );
 
 
+// Based on https://www.w3schools.com/js/js_cookies.asp
 function getCookie() {
     let name = "AI_MAP=";
     let decodedCookie = (document.cookie);
