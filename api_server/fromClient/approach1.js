@@ -71,10 +71,6 @@ function breadthFirstSearch(problem) {
             }
 
         }
-
-
-        if (i++ > 500)
-            return;
     }
 }
 
@@ -155,10 +151,6 @@ function uniformCostSearch(problem) {
             // else if ()
 
         }
-
-
-        if (i++ > 50000)
-            return;
     }
 }
 
