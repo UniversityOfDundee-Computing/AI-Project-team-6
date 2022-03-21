@@ -26,13 +26,16 @@ const requestHandler = function (req, res) {
     } else if (!route.startsWith("/api_server/")) { // Check we are not trying to list the server directory
         if (route.endsWith("/")) // Conventional forward of index page
             route += "index.html";
+        if (route.indexOf('\0') !== -1)
+            return;
 
         // Attempt to get the right file and return it, otherwise 404
-        fs.readFile(path.join("..", route), function (error, fileContent) {
+        const pth =path.join(__dirname, path.join("..", path.normalize(route).replace(/^(\.\.(\/|\\|$))+/, '')));
+        fs.readFile(pth, function (error, fileContent) {
             if (error) {
                 if (error.code === 'ENOENT') {
                     res.writeHead(404);
-                    res.end("NOT FOUND");
+                    res.end("NOT FOUND - '" + pth.replace("/home/adam_mathieson_apps/AI-Project-team-6", "") + "'");
                 }
             } else {
                 res.writeHead(200, {'Content-Type': mime.lookup(route)});
