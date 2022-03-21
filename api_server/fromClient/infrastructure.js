@@ -1,5 +1,7 @@
+const {checkIfArrayContainsState} = require("./process");
+
 // A blueprint for the problem definition, contains the initial state and a goal test
-class Problem {
+exports.Problem = class {
     // Empty values for initial and goal state
     initialState = null;
     goalStates = null;
@@ -12,7 +14,7 @@ class Problem {
 
     // Goal test returns true if the specified state matches one of the goal states
     goalTest(stateToTest) {
-        return checkIfArrayContainsState(this.goalStates, stateToTest);
+        return require("./process").checkIfArrayContainsState(this.goalStates, stateToTest);
     }
 
     /**
@@ -54,7 +56,7 @@ class Problem {
 
 // A blueprint for an element of the state space
 // A container for x,y coordinates
-class State {
+exports.State = class {
     constructor(x, y) {
         this.x = x;
         this.y = y;
@@ -62,7 +64,7 @@ class State {
 }
 
 // An blueprint for a Node
-class Node {
+exports.Node = class {
     // State is its cell location (x,y)
     state = null;
     // Parent is the parent Node

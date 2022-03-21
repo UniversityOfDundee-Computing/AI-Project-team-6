@@ -1,3 +1,4 @@
+const {runAnUninformedSearch} = require("./approach1");
 const {algo3} = require("./approach3");
 const Location = require("./classes").Location;
 

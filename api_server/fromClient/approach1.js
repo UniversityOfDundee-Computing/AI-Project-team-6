@@ -1,4 +1,8 @@
-async function breadthFirstSearch(problem) {
+let MinQueue = require("heapify").MinQueue;
+const {Problem, State, Node} = require("./infrastructure");
+let IMPORTS;
+
+function breadthFirstSearch(problem) {
 
     // Root node with initial state
     let rootNode = new Node({
@@ -52,8 +56,8 @@ async function breadthFirstSearch(problem) {
             });
 
             // Check if the node is present in the frontier or explored set
-            let isNodeInFrontier = checkIfArrayContainsNode(frontier, childNode);
-            let isNodeInExploredSet = checkIfArrayContainsState(explored, childNode.state);
+            let isNodeInFrontier = IMPORTS.checkIfArrayContainsNode(frontier, childNode);
+            let isNodeInExploredSet = IMPORTS.checkIfArrayContainsState(explored, childNode.state);
 
             // If not present in either
             if (!isNodeInFrontier && !isNodeInExploredSet) {
@@ -74,7 +78,7 @@ async function breadthFirstSearch(problem) {
     }
 }
 
-async function uniformCostSearch(problem) {
+function uniformCostSearch(problem) {
 
     // Root node with initial state
     let rootNode = new Node({
@@ -134,8 +138,8 @@ async function uniformCostSearch(problem) {
             });
 
             // Check if the node is present in the frontier or explored set
-            let isNodeInFrontier = checkIfArrayContainsNode(frontierList, childNode);
-            let isNodeInExploredSet = checkIfArrayContainsState(explored, childNode.state);
+            let isNodeInFrontier = IMPORTS.checkIfArrayContainsNode(frontierList, childNode);
+            let isNodeInExploredSet = IMPORTS.checkIfArrayContainsState(explored, childNode.state);
 
             // If not present in either
             if (!isNodeInFrontier && !isNodeInExploredSet) {
@@ -158,8 +162,11 @@ async function uniformCostSearch(problem) {
     }
 }
 
-async function runAnUninformedSearch(startLocation, targetLocations, algorithmToUse) {
-
+exports.runAnUninformedSearch = (imports, startLocation, targetLocations, algorithmToUse) => {
+    IMPORTS = imports;
+    GRID_DATA = IMPORTS.GRID_DATA;
+    GRID_CELLS_X = IMPORTS.GRID_CELLS_X;
+    GRID_CELLS_Y = IMPORTS.GRID_CELLS_Y;
 
     const startLocationCopy = startLocation;
     const targetLocationsCopy = targetLocations;
@@ -167,6 +174,7 @@ async function runAnUninformedSearch(startLocation, targetLocations, algorithmTo
     // The initial search finds a path from the start location to the nearest target location
     // The next iteration finds a path from that nearest target location to the next nearest target location
     // Loop repeats until all targets are found
+    let foundTargets = [];
     do {
 
         // Paint origin and target cells
@@ -183,9 +191,11 @@ async function runAnUninformedSearch(startLocation, targetLocations, algorithmTo
         // Execute a search from new start location to any of the remaining targets
         let foundTarget = null;
         if (algorithmToUse == "breadth-first")
-            foundTarget = await breadthFirstSearch(currentProblem);
+            foundTarget = breadthFirstSearch(currentProblem);
         else if (algorithmToUse == "uniform-cost")
-            foundTarget = await uniformCostSearch(currentProblem);
+            foundTarget = uniformCostSearch(currentProblem);
+
+        foundTargets.push(foundTarget);
 
         // Set the found target to be the new start location for the next search iteration
         startLocation = foundTarget.state;
@@ -196,12 +206,12 @@ async function runAnUninformedSearch(startLocation, targetLocations, algorithmTo
         });
 
         // Reset the colored frontier and explored set from previous search
-        resetExploredFrontierColors();
+        // resetExploredFrontierColors();
 
         // Paint the new cells
         foundTarget.parent
 
-        drawPath(foundTarget);
+        // drawPath(foundTarget);
         // Paint origin and target cells
         GRID_DATA[startLocationCopy.y][startLocationCopy.x].c = 1;
         for (let pointsKey in targetLocationsCopy) {
@@ -210,6 +220,8 @@ async function runAnUninformedSearch(startLocation, targetLocations, algorithmTo
 
         // Repeat searches until no target locations are left
     } while (targetLocations.length > 0);
+
+    return foundTargets;
 }
 
 function drawPath(node) {
