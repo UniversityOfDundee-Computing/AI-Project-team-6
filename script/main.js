@@ -77,25 +77,47 @@ document.getElementById("btn_continue").onclick = (_) => {
 
 document.getElementById("btn_import").onclick = (_) => {
     document.getElementById("imageUpload").click();
+    document.getElementById("imageUpload").onchange = (_) => {
+        // Based on http://jsfiddle.net/z3JtC/4
+        if (typeof window.FileReader !== 'function') {
+            console.error("FileReader not supported here")
+            return;
+        }
+
+        let fileReader = new FileReader();
+        fileReader.onload = () => {
+            GRID_Image_Data = new Image();
+            GRID_Image_Data.onload = () => {
+                renderGrid();
+            };
+            GRID_Image_Data.src = fileReader.result.toString();
+        };
+
+        fileReader.readAsDataURL(document.getElementById("imageUpload").files[0]);
+    }
 }
 
-document.getElementById("imageUpload").onchange = (_) => {
-    // Based on http://jsfiddle.net/z3JtC/4
-    if (typeof window.FileReader !== 'function') {
-        console.error("FileReader not supported here")
-        return;
-    }
+document.getElementById("btn_import_From_image").onclick = (_) => {
+    document.getElementById("imageUpload").click();
+    document.getElementById("imageUpload").onchange = (_) => {
+        // Based on http://jsfiddle.net/z3JtC/4
+        if (typeof window.FileReader !== 'function') {
+            console.error("FileReader not supported here")
+            return;
+        }
 
-    let fileReader = new FileReader();
-    fileReader.onload = () => {
-        GRID_Image_Data = new Image();
-        GRID_Image_Data.onload = () => {
-            renderGrid();
+        let fileReader = new FileReader();
+        fileReader.onload = () => {
+            GRID_Image_Data = new Image();
+            GRID_Image_Data.onload = () => {
+                processImage();
+                renderGrid();
+            };
+            GRID_Image_Data.src = fileReader.result.toString();
         };
-        GRID_Image_Data.src = fileReader.result.toString();
-    };
 
-    fileReader.readAsDataURL(document.getElementById("imageUpload").files[0]);
+        fileReader.readAsDataURL(document.getElementById("imageUpload").files[0]);
+    }
 }
 
 document.getElementById("btn_import_map").onclick = (_) => {
@@ -204,4 +226,38 @@ function updateRadios() {
     document.getElementById("setCellWeight").checked = (GRID_MODE === "WEI");
     document.getElementById("markDamaged").checked = (GRID_MODE === "DAM");
     document.getElementById("eraser").checked = (GRID_MODE === "ERA");
+}
+
+function processImage(THRESHOLD = 717) {
+
+    CONTEXT.fillStyle = "white";
+    CONTEXT.fillRect(0, 0, CANVAS.width, CANVAS.height);
+
+    if (GRID_Image_Data !== null)
+        CONTEXT.drawImage(GRID_Image_Data,
+            0, 0,
+            GRID_Image_Data.width, GRID_Image_Data.height,
+            0, 0,
+            CANVAS.width, CANVAS.height);
+
+    const cellW = (CANVAS.width / GRID_CELLS_X);
+    const cellH = (CANVAS.height / GRID_CELLS_Y);
+
+    for (let y = 0; y < GRID_CELLS_Y; y++) {
+        for (let x = 0; x < GRID_CELLS_X; x++) {
+            const pxDta = CONTEXT.getImageData(x * cellW, y * cellH, cellW, cellH).data;
+            let pixels = 0;
+            let pixelColor = 0;
+            for (let i = 0; i < pxDta.length; i += 4) {
+                const chunk = pxDta.slice(i, i + 4);
+                pixelColor = (chunk[0] + chunk[1] + chunk[2]);
+                pixels++;
+            }
+
+            if ((pixelColor) < THRESHOLD)
+                GRID_DATA[y][x] = -1;
+            else
+                GRID_DATA[y][x] = 0;
+        }
+    }
 }
