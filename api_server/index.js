@@ -35,7 +35,7 @@ const requestHandler = function (req, res) {
             if (error) {
                 if (error.code === 'ENOENT') {
                     res.writeHead(404);
-                    res.end("NOT FOUND - '" + pth + "'");
+                    res.end("NOT FOUND - '" + pth.replace("/home/adam_mathieson_apps/AI-Project-team-6", "") + "'");
                 }
             } else {
                 res.writeHead(200, {'Content-Type': mime.lookup(route)});
