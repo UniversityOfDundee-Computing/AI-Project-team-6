@@ -1,5 +1,8 @@
 // MinQueue used to help with the Astar method - https://github.com/luciopaiva/heapify
-let MinQueue = Heapify.MinQueue;
+let MinQueue = require("heapify").MinQueue;
+const Location = require("./classes").Location;
+let GRID_DATA;
+let IMPORTS;
 
 /**
  * Calculate the optimal route based on the nearest neighbour approach
@@ -45,8 +48,12 @@ function nearestNeighbourAlgo(startX, startY, points, translatedRoutes) {
  * @param startY
  * @param points
  */
-async function algo3(startX, startY, points) {
-    renderGrid();
+exports.algo3 = (imports, startX, startY, points) => {
+    IMPORTS = imports;
+    GRID_DATA = IMPORTS.GRID_DATA;
+    GRID_CELLS_X = IMPORTS.GRID_CELLS_X;
+    GRID_CELLS_Y = IMPORTS.GRID_CELLS_Y;
+
     let routes = [];
     let routesList = [];
 
@@ -60,9 +67,8 @@ async function algo3(startX, startY, points) {
             for (let pointsKey in points) {
                 GRID_DATA[points[pointsKey].y][points[pointsKey].x].c = 3;
             }
-            renderGrid();
 
-            let path = await aStar(pointSRC, pointDST);
+            let path = aStar(pointSRC, pointDST);
             if (path !== null)
                 routes.push(reconstructPath(path.cameFrom, path.current));
         }
@@ -78,9 +84,8 @@ async function algo3(startX, startY, points) {
                 for (let pointsKey in points) {
                     GRID_DATA[points[pointsKey].y][points[pointsKey].x].c = 3;
                 }
-                renderGrid();
 
-                let path = await aStar(pointSRC, pointDST);
+                let path = aStar(pointSRC, pointDST);
                 if (path !== null)
                     routes.push(reconstructPath(path.cameFrom, path.current));
             }
@@ -125,7 +130,8 @@ async function algo3(startX, startY, points) {
         GRID_DATA[points[pointsKey].y][points[pointsKey].x].c = 3;
     }
 
-    renderGrid();
+    return route;
+
 }
 
 /**
@@ -153,7 +159,7 @@ function reconstructPath(cameFrom, current) {
 
 
 // A* Algorithm, based on the pseudocode on https://en.wikipedia.org/wiki/A*_search_algorithm
-async function aStar(pointSRC, pointDST) {
+function aStar(pointSRC, pointDST) {
     // The nodes that have been discovered, but may still need to be expanded
     // MinQueue is an ordered (priority) queue from the Heapify library, this
     // is used to speed up execution and avoid sorting an array at each step.
@@ -196,17 +202,12 @@ async function aStar(pointSRC, pointDST) {
         if (current.equals(pointDST))
             return { cameFrom, current };
 
-        // Fill in current node to visualise algorithm
-        if (isVisualisationOn)
-            fillSquareOnGridFromLocation(current, "rgb(0,0,0)");
 
         // Get the relevant neighbour cells / actions
-        const actions = getNeighbourValues(current.x, current.y);
+        const actions = IMPORTS.getNeighbourValues(current.x, current.y);
 
         // iterate over the neighbours of the current cell
         actions.forEach((current_neighbour) => {
-            if (isVisualisationOn)
-                fillSquareOnGridFromLocation(current_neighbour, "rgb(0,180,255)");
             // Calculate the score of the current neighbour from the current node
             const tentative_gScore = gScore[current] + current_neighbour.v + 1;
 
@@ -225,9 +226,6 @@ async function aStar(pointSRC, pointDST) {
             }
         });
 
-        // Add a delay to visualise the algorithm
-        if (isVisualisationDelayOn)
-            await timer(visualisationDelayAmount);
     }
     return null;
 }
