@@ -26,9 +26,11 @@ const requestHandler = function (req, res) {
     } else if (!route.startsWith("/api_server/")) { // Check we are not trying to list the server directory
         if (route.endsWith("/")) // Conventional forward of index page
             route += "index.html";
+        if (route.indexOf('\0') !== -1)
+            return;
 
         // Attempt to get the right file and return it, otherwise 404
-        fs.readFile(path.join("..", route), function (error, fileContent) {
+        fs.readFile(path.join(__dirname, path.join("..", path.normalize(route).replace(/^(\.\.(\/|\\|$))+/, ''))), function (error, fileContent) {
             if (error) {
                 if (error.code === 'ENOENT') {
                     res.writeHead(404);
