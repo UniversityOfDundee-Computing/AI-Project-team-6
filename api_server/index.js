@@ -30,11 +30,12 @@ const requestHandler = function (req, res) {
             return;
 
         // Attempt to get the right file and return it, otherwise 404
-        fs.readFile(path.join(__dirname, path.join("..", path.normalize(route).replace(/^(\.\.(\/|\\|$))+/, ''))), function (error, fileContent) {
+        const pth =path.join(__dirname, path.join("..", path.normalize(route).replace(/^(\.\.(\/|\\|$))+/, '')));
+        fs.readFile(pth, function (error, fileContent) {
             if (error) {
                 if (error.code === 'ENOENT') {
                     res.writeHead(404);
-                    res.end("NOT FOUND");
+                    res.end("NOT FOUND - '" + pth + "'");
                 }
             } else {
                 res.writeHead(200, {'Content-Type': mime.lookup(route)});
