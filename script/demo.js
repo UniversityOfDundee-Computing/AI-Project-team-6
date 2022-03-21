@@ -51,6 +51,15 @@ document.getElementById("btn_markTarget").onclick = (_) => {
 document.getElementById("btn_eraser").onclick = (_) => {
     GRID_MODE = "ERA";
 }
+document.getElementById("btn_clear").onclick = (_) => {
+    for (const row of GRID_DATA) {
+        for (const rowElement of row) {
+            if (rowElement.c === 4)
+                rowElement.c = -1;
+        }
+    }
+    renderGrid();
+}
 
 CANVAS.onclick = addPoint;
 
