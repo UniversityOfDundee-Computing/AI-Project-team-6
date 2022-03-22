@@ -81,8 +81,6 @@ async function breadthFirstSearch(problem) {
         if (isVisualisationOn)
             fillSquareOnGridFromLocation(parentNode.state, "aqua");
 
-        if (i++ > 500)
-            return;
     }
 }
 
@@ -174,8 +172,6 @@ async function uniformCostSearch(problem) {
         // Fill the cell with colour to visualise the explored set
         fillSquareOnGridFromLocation(parentNode.state, "aqua");
 
-        if (i++ > 50000)
-            return;
     }
 }
 

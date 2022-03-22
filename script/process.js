@@ -9,7 +9,7 @@ if (typeof window !== 'undefined') { // test if running on api server
     CONTEXT = CANVAS.getContext("2d");
 }
 
-const GRID_OUTLINE = "rgba(255,0,0,0.5)";
+const GRID_OUTLINE = "rgba(75,75,75,0.5)";
 
 let GRID_CELLS_X = 1;
 let GRID_CELLS_Y = 1;
@@ -33,6 +33,9 @@ function renderGrid() {
             for (let x = 0; x < GRID_CELLS_X; x++) {
                 let colour;
 
+                if (GRID_DATA[y][x].c === -1 && GRID_DATA[y][x].v !== 0)
+                    GRID_DATA[y][x].c = 1;
+
                 // Legacy colour picking code and rendering code - mostly replaced with fillSquareOnGrid()
                 switch (GRID_DATA[y][x].c) {
                     case -1:
@@ -41,11 +44,11 @@ function renderGrid() {
                         break;
                     case 0:
                         // gray
-                        colour = "rgba(100,100,100,0.8)";
+                        colour = "rgba(100,100,100,1)";
                         break;
                     case 1:
-                        // magenta
-                        colour = "rgba(255,0,255,0.8)";
+                        // sea green
+                        colour = "rgba(0,159,103,0.8)";
                         break;
                     case 2:
                         // blue
@@ -57,7 +60,7 @@ function renderGrid() {
                         break;
                     case 4:
                         // cyan
-                        colour = "rgba(255,255,0,0.8)";
+                        colour = "rgba(255,0,0,1)";
                         break;
                     case 5:
                         // yellow

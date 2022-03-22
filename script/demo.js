@@ -51,6 +51,15 @@ document.getElementById("btn_markTarget").onclick = (_) => {
 document.getElementById("btn_eraser").onclick = (_) => {
     GRID_MODE = "ERA";
 }
+document.getElementById("btn_clear").onclick = (_) => {
+    for (const row of GRID_DATA) {
+        for (const rowElement of row) {
+            if (rowElement.c === 4)
+                rowElement.c = -1;
+        }
+    }
+    renderGrid();
+}
 
 CANVAS.onclick = addPoint;
 
@@ -90,7 +99,10 @@ function addPoint(event) {
             case "ERA":
                 if (GRID_DATA[y][x].v !== -1) {
                     GRID_DATA[y][x].c = -1;
-                    const index = TARGET_LOCATIONS.indexOf(new Location(x, y));
+                    let elemToDelete = TARGET_LOCATIONS.filter(e => {
+                        return (e.x === x && e.y === y)
+                    })[0];
+                    const index = TARGET_LOCATIONS.indexOf(elemToDelete);
                     if (index > -1) {
                         TARGET_LOCATIONS.splice(index, 1);
                     }
