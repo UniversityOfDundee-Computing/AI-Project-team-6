@@ -86,7 +86,8 @@ function addPoint(event) {
             case "SRT":
                 if (GRID_DATA[y][x].v !== -1) {
                     GRID_DATA[y][x].c = 2;
-                    GRID_DATA[START_LOCATION.y][START_LOCATION.x].c = -1;
+                    // todo
+                    // GRID_DATA[START_LOCATION.y][START_LOCATION.x].c = -1;
                     START_LOCATION = new Location(x, y);
                 }
                 break;

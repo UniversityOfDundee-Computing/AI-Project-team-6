@@ -17,7 +17,7 @@ let GRID_DATA = [];
 for (let y = 0; y < GRID_CELLS_Y; y++) {
     GRID_DATA.push([]);
     for (let x = 0; x < GRID_CELLS_X; x++)
-        GRID_DATA[y].push({v: 0, c: -1});
+        GRID_DATA[y].push({ v: 0, c: -1 });
 }
 
 /**
@@ -93,7 +93,7 @@ function importFrom2dArr(arr) {
         GRID_DATA.push([]);
         let x = 0;
         row.forEach((cell) => {
-            GRID_DATA[y][x] = {v: cell, c: (cell === -1 ? 0 : -1)}
+            GRID_DATA[y][x] = { v: cell, c: (cell === -1 ? 0 : -1) }
             x++;
         })
         y++;
@@ -219,18 +219,22 @@ function checkIfArrayContainsState(array, state) {
  * @param method
  */
 function findPath(startLocation = new Location(0, 0),
-                  targets = Location[0], method = "approach3") {
+    targets = Location[0], method = "approach3") {
 
     switch (method) {
-        case "uninformed-breadth-first":
-            runAnUninformedSearch(startLocation, targets, "breadth-first")
+        case "approach1-breadth-first":
+            runApproach1(startLocation, targets, "breadth-first")
             break;
-        case "uninformed-uniform-cost":
-            runAnUninformedSearch(startLocation, targets, "uniform-cost")
+        case "approach1-uniform-cost":
+            runApproach1(startLocation, targets, "uniform-cost")
             break;
-        case "approach3":
+        case "approach1-astar":
+            runApproach1(startLocation, targets, "astar")
+            break;
+        case "approach2-astar":
             algo3(startLocation.x, startLocation.y, targets);
             break;
+
         default:
             console.error("Unknown method: '" + method + "'");
     }

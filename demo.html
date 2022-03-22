@@ -34,9 +34,10 @@
             </div>
             <div class="col">
                 <select class="form-select my-2 w-75 mx-auto" id="method">
-                    <option selected value="uninformed-breadth-first">uninformed-breadth-first</option>
-                    <option value="uninformed-uniform-cost">uninformed-uniform-cost</option>
-                    <option value="approach3">A* / Nearest Neighbour</option>
+                    <option selected value="approach1-breadth-first">Approach 1: Breadth-first</option>
+                    <option value="approach1-uniform-cost">Approach 2: Uniform-cost</option>
+                    <option value="approach1-astar">Approach 1: A* + Nearest Neighbour</option>
+                    <option value="approach2-astar">Approach 2: A* + Nearest Neighbour</option>
                 </select>
             </div>
             <div class="col">
@@ -80,9 +81,17 @@
         crossorigin="anonymous"></script>
 <script src="https://unpkg.com/heapify"></script>
 <script src="script/classes.js"></script>
+
+<!-- Infrastructure -->
 <script src="script/algorithms/infrastructure.js"></script>
-<script src="script/algorithms/approach1.js"></script>
+<!-- Approaches -->
+<script src="script/algorithms/approach-1.js"></script>
 <script src="script/algorithms/approach3.js"></script>
+<!-- Search algorithms -->
+<script src="script/algorithms/search-A-star.js"></script>
+<script src="script/algorithms/search-Breadth-first.js"></script>
+<script src="script/algorithms/search-Uniform-cost.js"></script>
+
 <script src="script/process.js"></script>
 <script src="script/demo.js"></script>
 </body>
