@@ -15,9 +15,6 @@ async function uniformCostSearch(problem) {
     frontierList.push(rootNode);
     let explored = [];
 
-    // TODO: safeguard for infinite loops, delete
-    let i = 0;
-
     while (true) {
 
         // Return failure if there are no more nodes to expand in the frontier
@@ -55,8 +52,7 @@ async function uniformCostSearch(problem) {
                 state: newState,
                 parent: parentNode,
                 action: action,
-                // TODO: path cost needs to be at least 0.1 for uniform-cost
-                pathCost: parentNode.pathCost + action.v + 0.1
+                pathCost: parentNode.pathCost + action.v
             });
 
             // Check if the node is present in the frontier or explored set
@@ -65,7 +61,6 @@ async function uniformCostSearch(problem) {
 
             // If not present in either
             if (!isNodeInFrontier && !isNodeInExploredSet) {
-                // TODO: not part of the original algo
                 // Check if this node is the solution
                 if (problem.goalTest(childNode.state)) {
                     return childNode;

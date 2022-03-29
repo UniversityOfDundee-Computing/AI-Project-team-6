@@ -1,4 +1,4 @@
-async function breadthFirstSearch(problem) {
+async function aStarSearch(problem) {
 
     // Root node with initial state
     let rootNode = new Node({
@@ -8,33 +8,39 @@ async function breadthFirstSearch(problem) {
         pathCost: 0
     });
 
-    // Check if the root node is the solution
-    if (problem.goalTest(rootNode.state)) {
-        return rootNode;
-    }
+    // Calculate the evaluation function
+    let nodePathCost = rootNode.pathCost;
+    let heuristicFunction = distance(rootNode.state, problem.goalStates[0]);
+    let evaluationFunction = nodePathCost + heuristicFunction;
 
     // Create the frontier and explored data structures
-    let frontier = [rootNode];
+    let frontier = new MinQueue(GRID_CELLS_Y * GRID_CELLS_X, [], [], Node, Float32Array);
+    let frontierList = [];
+    frontier.push(rootNode, evaluationFunction);
+    frontierList.push(rootNode);
     let explored = [];
-
-    // TODO: safeguard for infinite loops, delete
-    let i = 0;
 
     while (true) {
 
         // Return failure if there are no more nodes to expand in the frontier
-        if (frontier.length === 0)
+        if (frontier.size === 0)
             return null;
 
-        // Get the next node to expand (first-in-first-out from frontier)
-        let parentNode = frontier.shift();
+        // Get the next node to expand (ordered by priority)
+        let parentNode = frontier.pop();
+        var indexOfNode = frontierList.indexOf(parentNode);
+        frontierList.splice(indexOfNode, 1);
+
+        // Check if this node is the solution
+        if (problem.goalTest(parentNode.state)) {
+            return parentNode;
+        }
 
         // Add the node to the explored set
         explored.push(parentNode.state);
 
         // Fill the current cell to visualise which cell is being expanded
-        if (isVisualisationOn)
-            fillSquareOnGridFromLocation(parentNode.state, "black");
+        fillSquareOnGridFromLocation(parentNode.state, "black");
 
         // Get the possible actions from the current node
         let actions = problem.getActions(parentNode.state);
@@ -55,21 +61,27 @@ async function breadthFirstSearch(problem) {
             });
 
             // Check if the node is present in the frontier or explored set
-            let isNodeInFrontier = checkIfArrayContainsNode(frontier, childNode);
+            let isNodeInFrontier = checkIfArrayContainsNode(frontierList, childNode);
             let isNodeInExploredSet = checkIfArrayContainsState(explored, childNode.state);
 
             // If not present in either
             if (!isNodeInFrontier && !isNodeInExploredSet) {
-
-                // Return the node if it's the solution
-                if (problem.goalTest(childNode.state))
+                // Check if this node is the solution
+                if (problem.goalTest(childNode.state)) {
                     return childNode;
+                }
+                
+                // Calculate the evaluation function
+                let nodePathCost = childNode.pathCost;
+                let heuristicFunction = distance(childNode.state, problem.goalStates[0]);
+                let evaluationFunction = nodePathCost + heuristicFunction;
 
                 // Add the node to the frontier to be expanded in the next step
-                frontier.push(childNode);
+                frontier.push(childNode, evaluationFunction);
+                frontierList.push(childNode);
+                
                 // Fill the cell with colour to visualise the frontier set
-                if (isVisualisationOn)
-                    fillSquareOnGridFromLocation(childNode.state, "blue");
+                fillSquareOnGridFromLocation(childNode.state, "blue");
             }
 
             // Add a delay to visualise the algorithm
@@ -78,8 +90,7 @@ async function breadthFirstSearch(problem) {
         }
 
         // Fill the cell with colour to visualise the explored set
-        if (isVisualisationOn)
-            fillSquareOnGridFromLocation(parentNode.state, "aqua");
+        fillSquareOnGridFromLocation(parentNode.state, "aqua");
 
     }
 }

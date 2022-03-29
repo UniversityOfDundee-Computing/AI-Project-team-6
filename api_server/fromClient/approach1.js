@@ -21,9 +21,6 @@ function breadthFirstSearch(problem) {
     let frontier = [rootNode];
     let explored = [];
 
-    // TODO: safeguard for infinite loops, delete
-    let i = 0;
-
     while (true) {
 
         // Return failure if there are no more nodes to expand in the frontier
@@ -91,9 +88,6 @@ function uniformCostSearch(problem) {
     frontierList.push(rootNode);
     let explored = [];
 
-    // TODO: safeguard for infinite loops, delete
-    let i = 0;
-
     while (true) {
 
         // Return failure if there are no more nodes to expand in the frontier
@@ -129,7 +123,6 @@ function uniformCostSearch(problem) {
                 state: newState,
                 parent: parentNode,
                 action: action,
-                // TODO: path cost needs to be at least 0.1 for uniform-cost
                 pathCost: parentNode.pathCost + action.v + 0.1
             });
 
@@ -139,7 +132,6 @@ function uniformCostSearch(problem) {
 
             // If not present in either
             if (!isNodeInFrontier && !isNodeInExploredSet) {
-                // TODO: not part of the original algo
                 // Check if this node is the solution
                 if (problem.goalTest(childNode.state)) {
                     return childNode;

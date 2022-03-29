@@ -1,7 +1,8 @@
 async function runApproach1(startLocation, targetLocations, algorithmToUse) {
 
+    var approach1StartTime = performance.now();
+
     // Fill in the start and goal cells
-    // TODO: fix
     fillSquareOnGridFromLocation(startLocation, "red");
     targetLocations.forEach(location => {
         fillSquareOnGridFromLocation(location, "green");
@@ -9,6 +10,7 @@ async function runApproach1(startLocation, targetLocations, algorithmToUse) {
 
     const startLocationCopy = startLocation;
     const targetLocationsCopy = targetLocations;
+    var totalPathCost = 0;
 
     // The initial search finds a path from the start location to the nearest target location
     // The next iteration finds a path from that nearest target location to the next nearest target location
@@ -47,12 +49,9 @@ async function runApproach1(startLocation, targetLocations, algorithmToUse) {
             return !(value.x == foundTarget.state.x && value.y == foundTarget.state.y);
         });
 
-        // Reset the colored frontier and explored set from previous search
-        resetExploredFrontierColors();
-
+        // Add the path cost of found route
+        totalPathCost += foundTarget.pathCost;
         // Paint the new cells
-        foundTarget.parent
-
         drawPath(foundTarget);
         // Paint origin and target cells
         GRID_DATA[startLocationCopy.y][startLocationCopy.x].c = 1;
@@ -63,6 +62,9 @@ async function runApproach1(startLocation, targetLocations, algorithmToUse) {
 
         // Repeat searches until no target locations are left
     } while (targetLocations.length > 0);
+
+    var approach1EndTime = performance.now();
+    console.log(`Approach 1 (${algorithmToUse}): TIME: ${(approach1EndTime-approach1StartTime).toFixed(2)} ms, PATH-COST: ${totalPathCost.toFixed(2)}`);
 }
 
 function drawPath(node) {

@@ -129,26 +129,9 @@ function fillSquareOnGridFromLocation(location, colour) {
     fillSquareOnGrid(location.x, location.y, colour)
 }
 
-// TODO: fix if we want it
-function resetExploredFrontierColors() {
-    // let mergedArrays = exploredColoredCells.concat(frontierColoredCells);
-
-    // mergedArrays.forEach(cell => { 
-    //     CONTEXT.clearRect(cell.x * (CANVAS.width / GRID_CELLS_X), cell.y * (CANVAS.height / GRID_CELLS_Y),
-    //     (CANVAS.width / GRID_CELLS_X), (CANVAS.height / GRID_CELLS_Y));
-    // });
-}
-
 // Line taken from https://stackoverflow.com/questions/3583724/how-do-i-add-a-delay-in-a-javascript-loop
 // Returns a Promise that resolves after "ms" Milliseconds
 const timer = ms => new Promise(res => setTimeout(res, ms))
-
-
-/**
- * -----
- * Path Finding Algos
- * ----
- */
 
 /**
  * Wrapper using Location class
@@ -232,10 +215,116 @@ function findPath(startLocation = new Location(0, 0),
             runApproach1(startLocation, targets, "astar")
             break;
         case "approach2-astar":
-            algo3(startLocation.x, startLocation.y, targets);
+            runApproach2(startLocation.x, startLocation.y, targets);
             break;
 
         default:
             console.error("Unknown method: '" + method + "'");
     }
+}
+
+let START_LOCATION = new Location(0, 0);
+let TARGET_LOCATIONS = [];
+let GRID_MODE = "SRT";
+
+
+importFrom2dArr( // Import from a 2d json array
+    JSON.parse( // Parse the decoded data into a json object
+        atob( // Decode the base64
+            LZString.decompress( // Decompress the data
+                unescape( // unescape the escaped characters
+                    getCookie() // get the data cookie
+                )
+            )
+        )
+    )
+);
+
+
+// Based on https://www.w3schools.com/js/js_cookies.asp
+function getCookie() {
+    let name = "AI_MAP=";
+    let decodedCookie = (document.cookie);
+    let ca = decodedCookie.split(';');
+    for (let c of ca) {
+        while (c.charAt(0) === ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) === 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+
+document.getElementById("goBtn").onclick = (_) => {
+    isVisualisationOn = document.getElementById("isViz").checked;
+    isVisualisationDelayOn = document.getElementById("isDelay").checked;
+    visualisationDelayAmount = document.getElementById("delayAmount").value;
+
+    findPath(START_LOCATION, TARGET_LOCATIONS, document.getElementById("method").value);
+}
+
+document.getElementById("btn_markStart").onclick = (_) => {
+    GRID_MODE = "SRT";
+}
+
+document.getElementById("btn_markTarget").onclick = (_) => {
+    GRID_MODE = "TAR";
+}
+document.getElementById("btn_eraser").onclick = (_) => {
+    GRID_MODE = "ERA";
+}
+document.getElementById("btn_clear").onclick = (_) => {
+    for (const row of GRID_DATA) {
+        for (const rowElement of row) {
+            if (rowElement.c === 4)
+                rowElement.c = -1;
+        }
+    }
+    renderGrid();
+}
+
+CANVAS.onclick = addPoint;
+
+CANVAS.onmousemove = (event) => {
+    if (event.buttons === 1)
+        addPoint(event);
+}
+
+
+function addPoint(event) {
+    const x = Math.round(event.offsetX / (CANVAS.offsetWidth) * GRID_CELLS_X);
+    const y = Math.round(event.offsetY / (CANVAS.offsetHeight) * GRID_CELLS_Y);
+
+    if (x >= 0 && x < GRID_CELLS_X && y >= 0 && y < GRID_CELLS_Y) {
+        switch (GRID_MODE) {
+            case "SRT":
+                if (GRID_DATA[y][x].v !== -1) {
+                    GRID_DATA[y][x].c = 2;
+                    START_LOCATION = new Location(x, y);
+                }
+                break;
+            case "TAR":
+                if (GRID_DATA[y][x].v !== -1) {
+                    GRID_DATA[y][x].c = 3;
+                    TARGET_LOCATIONS.push(new Location(x, y));
+                }
+                break;
+            case "ERA":
+                if (GRID_DATA[y][x].v !== -1) {
+                    GRID_DATA[y][x].c = -1;
+                    let elemToDelete = TARGET_LOCATIONS.filter(e => {
+                        return (e.x === x && e.y === y)
+                    })[0];
+                    const index = TARGET_LOCATIONS.indexOf(elemToDelete);
+                    if (index > -1) {
+                        TARGET_LOCATIONS.splice(index, 1);
+                    }
+                }
+                break;
+        }
+    }
+    renderGrid();
 }
