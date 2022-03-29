@@ -69,7 +69,6 @@ exports.Node = class {
     state = null;
     // Parent is the parent Node
     parent = null;
-    // TODO: action class?
     action = null;
     // pathCost is the cumulative path cost
     pathCost = 0;

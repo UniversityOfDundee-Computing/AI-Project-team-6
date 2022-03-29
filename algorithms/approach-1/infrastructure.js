@@ -37,9 +37,11 @@ class Problem {
                         y + cellsToCheck[dirY] >= 0 && y + cellsToCheck[dirY] < GRID_CELLS_Y &&
                         GRID_DATA[y + cellsToCheck[dirY]][x + cellsToCheck[dirX]].v !== -1
                     ) {
-                        // console.log(dir.length);
+                        var pathCost = (GRID_DATA[y + cellsToCheck[dirY]][x + cellsToCheck[dirX]].v);
+                        if (pathCost == 0)
+                            pathCost = 0.1;
                         rtn.push({
-                            v: (GRID_DATA[y + cellsToCheck[dirY]][x + cellsToCheck[dirX]].v)*dir.length,
+                            v: pathCost*dir.length,
                             x: x + cellsToCheck[dirX],
                             y: y + cellsToCheck[dirY],
                             d: dir
@@ -67,7 +69,6 @@ class Node {
     state = null;
     // Parent is the parent Node
     parent = null;
-    // TODO: action class?
     action = null;
     // pathCost is the cumulative path cost
     pathCost = 0;
